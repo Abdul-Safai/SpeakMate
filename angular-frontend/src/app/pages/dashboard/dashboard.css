@@ -1,0 +1,36 @@
+.dashboard {
+ max-width: 800px;
+ margin: 50px auto;
+ padding: 20px;
+ background-color: #f3f3f3;
+ border-radius: 10px;
+ text-align: center;
+ box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.dashboard h1 {
+ font-size: 2em;
+ margin-bottom: 10px;
+}
+
+.dashboard p {
+ font-size: 1.1em;
+ margin-bottom: 20px;
+ color: #555;
+}
+
+.actions button {
+ margin: 10px;
+ padding: 10px 20px;
+ font-size: 1em;
+ background: #007bff;
+ color: white;
+ border: none;
+ border-radius: 6px;
+ cursor: pointer;
+ transition: background 0.3s ease;
+}
+
+.actions button:hover {
+ background: #0056b3;
+}
