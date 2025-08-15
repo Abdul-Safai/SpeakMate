@@ -1,7 +1,5 @@
 <?php
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// backend/api/reset_password.php
 
 // CORS headers
 header("Access-Control-Allow-Origin: *");
@@ -9,63 +7,62 @@ header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
-// Handle preflight OPTIONS request
+// Handle preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// Read incoming JSON data
-$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-if ($contentType === 'application/json') {
-    $data = json_decode(file_get_contents("php://input"), true);
-    $token = $data['token'] ?? null;
-    $newPassword = $data['password'] ?? null;
-} else {
-    $token = $_POST['token'] ?? null;
-    $newPassword = $_POST['password'] ?? null;
+// Read and decode JSON input
+$rawInput = file_get_contents("php://input");
+$data = json_decode($rawInput, true);
+
+// Validate JSON
+if (!is_array($data)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid JSON body.']);
+    exit;
 }
 
-// Validate inputs
+$token = $data['token'] ?? '';
+$newPassword = $data['new_password'] ?? '';
+
 if (!$token || !$newPassword) {
     http_response_code(400);
-    echo json_encode(["success" => false, "error" => "Missing token or password."]);
+    echo json_encode(['success' => false, 'error' => 'Token and new password are required.']);
     exit;
 }
 
-require_once 'database.php'; // ✅ Your database config
+require_once(__DIR__ . '/../config/database.php');
 
-// Step 1: Check if token is valid and not expired
-$query = "SELECT * FROM password_resets WHERE token = :token AND expires_at > NOW()";
-$stmt = $db->prepare($query);
+// Check token
+$sql = "SELECT * FROM users WHERE reset_token = :token AND reset_expires > NOW()";
+$stmt = $db->prepare($sql);
 $stmt->bindParam(':token', $token);
 $stmt->execute();
-$resetRequest = $stmt->fetch(PDO::FETCH_ASSOC);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$resetRequest) {
+if (!$user) {
     http_response_code(400);
-    echo json_encode(["success" => false, "error" => "Invalid or expired token."]);
+    echo json_encode(['success' => false, 'error' => 'Invalid or expired token.']);
     exit;
 }
 
-$email = $resetRequest['email'];
-
-// Step 2: Hash the new password
+// Hash password
 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-// Step 3: Update user password
-$update = "UPDATE users SET password_hash = :password WHERE email = :email";
-$stmt = $db->prepare($update);
-$stmt->execute([
-    ':password' => $hashedPassword,
-    ':email' => $email
-]);
+// Update password and clear token
+$updateSql = "UPDATE users 
+              SET password_hash = :password, reset_token = NULL, reset_expires = NULL 
+              WHERE id = :id";
+$updateStmt = $db->prepare($updateSql);
+$updateStmt->bindParam(':password', $hashedPassword);
+$updateStmt->bindParam(':id', $user['id']);
 
-// Step 4: Remove the used token
-$delete = "DELETE FROM password_resets WHERE token = :token";
-$stmt = $db->prepare($delete);
-$stmt->bindParam(':token', $token);
-$stmt->execute();
-
-echo json_encode(["success" => true, "message" => "Password has been reset successfully."]);
+if ($updateStmt->execute()) {
+    echo json_encode(['success' => true, 'message' => 'Password updated successfully.']);
+} else {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Failed to update password.']);
+}
 ?>

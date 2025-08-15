@@ -1,31 +1,28 @@
 <?php
 // backend/api/register.php
 
-// CORS Headers
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
-// Handle preflight (OPTIONS) requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// Handle both JSON and form-data
-if ($_SERVER['CONTENT_TYPE'] === 'application/json') {
+$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+if ($contentType === 'application/json') {
     $data = json_decode(file_get_contents("php://input"), true);
-    $full_name = $data['full_name'] ?? null;
-    $email = $data['email'] ?? null;
-    $password = $data['password'] ?? null;
+    $full_name = trim($data['full_name'] ?? '');
+    $email     = trim($data['email'] ?? '');
+    $password  = trim($data['password'] ?? '');
 } else {
-    $full_name = $_POST['full_name'] ?? null;
-    $email = $_POST['email'] ?? null;
-    $password = $_POST['password'] ?? null;
+    $full_name = trim($_POST['full_name'] ?? '');
+    $email     = trim($_POST['email'] ?? '');
+    $password  = trim($_POST['password'] ?? '');
 }
 
-// Validate input
 if (!$full_name || !$email || !$password) {
     http_response_code(400);
     echo json_encode(["error" => "Missing required fields"]);

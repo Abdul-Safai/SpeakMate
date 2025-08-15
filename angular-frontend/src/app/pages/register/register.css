@@ -1,0 +1,191 @@
+/* Global font */
+body {
+ font-family: 'Playfair Display', serif;
+ margin: 0;
+}
+
+/* Page layout */
+.page-wrapper {
+ display: flex;
+ flex-direction: column;
+ min-height: 100vh;
+}
+
+.content-wrapper {
+ flex: 1;
+}
+
+/* Header */
+.site-header {
+ background-color: #00703c;
+ padding: 20px 0;
+ color: #fff;
+}
+
+.container {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ width: 90%;
+ margin: 0 auto;
+}
+
+.logo-nav {
+ display: flex;
+ align-items: center;
+}
+
+.logo {
+ height: 48px;
+ margin-right: 12px;
+}
+
+.site-title {
+ font-size: 2rem;
+ font-weight: bold;
+ color: white;
+}
+
+.main-nav ul {
+ list-style: none;
+ display: flex;
+ gap: 75px;
+ margin: 0;
+ padding: 0;
+}
+
+.main-nav a {
+ color: white;
+ text-decoration: none;
+ font-weight: 600;
+ font-size: 1.3rem;
+}
+
+.main-nav a:hover {
+ text-decoration: underline;
+}
+
+.auth-buttons .nav-btn {
+ background: white;
+ color: #00703c;
+ padding: 8px 16px;
+ border-radius: 6px;
+ font-weight: bold;
+ text-decoration: none;
+ font-size: 1rem;
+ transition: background-color 0.3s ease;
+}
+
+.auth-buttons .nav-btn:hover {
+ background: #f2f2f2;
+}
+
+/* Footer */
+.site-footer {
+ background-color: #2e2e2e;
+ color: white;
+ text-align: center;
+ padding: 15px 0;
+ font-size: 1rem;
+}
+
+/* Main container */
+.register-main {
+ flex: 1;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ background: linear-gradient(to right, #e0f2f1, #ffffff);
+ padding: 40px 20px;
+}
+
+/* Register box */
+.register-box {
+ background: #fff;
+ padding: 60px 40px;
+ border-radius: 16px;
+ box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+ width: 100%;
+ max-width: 500px;
+ min-height: 580px;
+ text-align: center;
+}
+
+/* Heading */
+.register-box h2 {
+ font-size: 2.6rem;
+ margin-bottom: 16px;
+ color: #00703c;
+}
+
+/* Subtext */
+.register-sub {
+ font-size: 1.2rem;
+ color: #666;
+ margin-bottom: 30px;
+}
+
+/* Form labels and inputs */
+.register-box label {
+ display: block;
+ text-align: left;
+ font-size: 1.1rem;
+ margin-bottom: 8px;
+ color: #333;
+ font-weight: 500;
+}
+
+.register-box input {
+ width: 100%;
+ padding: 14px 16px;
+ margin-bottom: 24px;
+ border: 1px solid #ccc;
+ border-radius: 6px;
+ font-size: 1.1rem;
+}
+
+/* Button */
+.register-btn {
+ width: 100%;
+ padding: 14px;
+ background-color: #00703c;
+ color: #fff;
+ font-size: 1.2rem;
+ font-weight: bold;
+ border: none;
+ border-radius: 6px;
+ cursor: pointer;
+ transition: background-color 0.3s ease;
+}
+
+.register-btn:hover {
+ background-color: #005e2e;
+}
+
+/* Message */
+.register-message {
+ color: red;
+ margin-top: 12px;
+ font-weight: bold;
+ font-size: 1.5rem;
+}
+
+/* Responsive layout */
+@media (max-width: 640px) {
+ .register-box {
+   padding: 40px 20px;
+   min-height: 500px;
+ }
+
+ .register-box h2 {
+   font-size: 2.2rem;
+ }
+
+ .register-sub {
+   font-size: 1.5rem;
+ }
+
+ .register-btn {
+   font-size: 1.1rem;
+ }
+}

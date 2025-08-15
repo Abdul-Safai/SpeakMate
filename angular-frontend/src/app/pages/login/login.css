@@ -1,49 +1,86 @@
+/* Page layout */
+.page-wrapper {
+ display: flex;
+ flex-direction: column;
+ min-height: 100vh;
+ margin: 0;
+}
+
+.content-wrapper {
+ flex: 1;
+}
+
+/* Footer */
+.site-footer {
+ background-color: #00703c;
+ color: white;
+ text-align: center;
+ padding: 15px 0;
+ font-size: 1rem;
+}
+
+/* Main container */
 .login-main {
  flex: 1;
  display: flex;
  justify-content: center;
  align-items: center;
  background: linear-gradient(to right, #e0f2f1, #ffffff);
- padding: 50px 20px;
+ padding: 40px 20px;
 }
 
+/* Login box */
 .login-box {
  background: #fff;
- padding: 40px;
+ padding: 60px 40px;
  border-radius: 16px;
  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
  width: 100%;
- max-width: 450px;
+ max-width: 500px;
+ min-height: 550px;
  text-align: center;
 }
 
+/* Heading */
 .login-box h2 {
- font-size: 2.2rem;
- margin-bottom: 10px;
+ font-size: 2.6rem;
+ margin-bottom: 16px;
  color: #00703c;
 }
 
+/* Subtext */
 .login-sub {
- font-size: 1rem;
+ font-size: 1.2rem;
  color: #666;
- margin-bottom: 25px;
+ margin-bottom: 30px;
+}
+
+/* Form labels and inputs */
+.login-box label {
+ display: block;
+ text-align: left;
+ font-size: 1.1rem;
+ margin-bottom: 8px;
+ color: #333;
+ font-weight: 500;
 }
 
 .login-box input {
  width: 100%;
- padding: 12px 14px;
- margin-bottom: 20px;
+ padding: 14px 16px;
+ margin-bottom: 24px;
  border: 1px solid #ccc;
  border-radius: 6px;
- font-size: 1rem;
+ font-size: 1.1rem;
 }
 
+/* Button */
 .login-btn {
  width: 100%;
- padding: 12px;
+ padding: 14px;
  background-color: #00703c;
  color: #fff;
- font-size: 1.1rem;
+ font-size: 1.2rem;
  font-weight: bold;
  border: none;
  border-radius: 6px;
@@ -55,37 +92,47 @@
  background-color: #005e2e;
 }
 
-.forgot-password {
- margin-top: 15px;
-}
-
-.forgot-password a {
- font-size: 0.95rem;
- color: #00703c;
- text-decoration: none;
-}
-
-.forgot-password a:hover {
- text-decoration: underline;
-}
-
-.login-message {
- color: red;
- margin-top: 10px;
- font-weight: bold;
-}
+/* Forgot password */
 .forgot-password-link {
  text-align: right;
- margin: 5px 0 15px;
+ margin: 5px 0 20px;
 }
 
 .forgot-password-link a {
+ font-size: 1rem;
  color: #00703c;
  text-decoration: none;
- font-size: 0.95rem;
  font-weight: 500;
 }
 
 .forgot-password-link a:hover {
  text-decoration: underline;
+}
+
+/* Error message */
+.login-message {
+ color: red;
+ margin-top: 12px;
+ font-weight: bold;
+ font-size: 1.5rem;
+}
+
+/* Responsive layout */
+@media (max-width: 640px) {
+ .login-box {
+   padding: 40px 20px;
+   min-height: 500px;
+ }
+
+ .login-box h2 {
+   font-size: 2.2rem;
+ }
+
+ .login-sub {
+   font-size: 1.5rem;
+ }
+
+ .login-btn {
+   font-size: 1.1rem;
+ }
 }

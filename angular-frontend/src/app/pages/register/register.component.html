@@ -1,15 +1,77 @@
-<h2>User Registration</h2>
-<form (submit)="registerUser($event)">
-  <label>Full Name:</label><br />
-  <input type="text" [(ngModel)]="fullName" name="fullName" required /><br /><br />
+<div class="page-wrapper">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="logo-nav">
+        <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+        <h1 class="site-title">SpeakMate</h1>
+      </div>
+      <nav class="main-nav">
+        <ul>
+          <li><a routerLink="/">Home</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Resources</a></li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        <a class="nav-btn" routerLink="/login">Login</a>
+      </div>
+    </div>
+  </header>
 
-  <label>Email:</label><br />
-  <input type="email" [(ngModel)]="email" name="email" required /><br /><br />
+  <!-- Main Content Wrapper -->
+  <div class="content-wrapper">
+    <!-- Main Register Section -->
+    <main class="register-main">
+      <div class="register-box">
+        <h2>Create Your Account</h2>
+        <p class="register-sub">Join SpeakMate and start your language journey today.</p>
 
-  <label>Password:</label><br />
-  <input type="password" [(ngModel)]="password" name="password" required /><br /><br />
+        <form (submit)="registerUser($event)">
+          <label for="fullName">Full Name</label>
+          <input
+            type="text"
+            [(ngModel)]="fullName"
+            name="fullName"
+            required
+            placeholder="Enter your full name"
+          />
 
-  <button type="submit">Register</button>
+          <label for="email">Email</label>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            placeholder="Enter your email"
+          />
 
-  <p *ngIf="message">{{ message }}</p>
-</form>
+          <label for="password">Password</label>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            placeholder="Create a password"
+          />
+
+          <button
+            type="submit"
+            class="register-btn"
+            [disabled]="!fullName || !email || !password"
+          >
+            Register
+          </button>
+
+          <p *ngIf="message" class="register-message">{{ message }}</p>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>&copy; 2025 SpeakMate. All rights reserved.</p>
+  </footer>
+</div>

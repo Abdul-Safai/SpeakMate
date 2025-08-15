@@ -71,7 +71,8 @@ $update->execute([
     ':id' => $user['id']
 ]);
 
-$resetLink = "http://localhost/SpeakMate/php/reset_password.php?token=$token";
+$resetLink = "http://localhost:4200/reset-password?token=$token";
+
 
 // ---------- Send email ----------
 $mail = new PHPMailer(true);

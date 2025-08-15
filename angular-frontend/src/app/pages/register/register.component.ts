@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router'; // ✅ IMPORT THIS
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule], // ✅ ADD RouterModule
   templateUrl: './register.component.html',
   styleUrls: ['./register.css']
 })
@@ -27,15 +28,21 @@ export class RegisterComponent {
       password: this.password
     };
 
-    this.http.post<any>('http://localhost/SpeakMate/backend/api/register.php', payload)
-      .subscribe({
-        next: (response) => {
-          this.message = response.message || 'Registration successful!';
-        },
-        error: (error) => {
-          console.error(error);
-          this.message = error.error?.error || 'Error connecting to server.';
-        }
-      });
+    this.http.post<any>('http://localhost/SpeakMate/backend/api/register.php', payload).subscribe({
+      next: (response) => {
+        this.message = response.message || 'Registration successful!';
+        this.resetForm();
+      },
+      error: (error) => {
+        console.error(error);
+        this.message = error.error?.error || 'Error connecting to server.';
+      }
+    });
+  }
+
+  private resetForm() {
+    this.fullName = '';
+    this.email = '';
+    this.password = '';
   }
 }
