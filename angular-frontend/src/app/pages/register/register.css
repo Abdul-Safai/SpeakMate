@@ -189,3 +189,18 @@ body {
    font-size: 1.1rem;
  }
 }
+.register-message {
+  margin-top: 15px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.register-message.success {
+  color: #28a745; /* Green */
+  font-weight: bold;
+}
+
+.register-message.error {
+  color: #dc3545; /* Red */
+  font-weight: bold;
+}

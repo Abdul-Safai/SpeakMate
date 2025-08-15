@@ -23,7 +23,7 @@ export class LoginComponent {
     event.preventDefault();
     this.message = '';
 
-    const trimmedEmail = this.email.trim();
+    const trimmedEmail = this.email.trim().toLowerCase(); // ✅ keep this
     const trimmedPassword = this.password.trim();
 
     console.log('Email entered:', `"${trimmedEmail}"`);

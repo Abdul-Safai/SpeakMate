@@ -28,7 +28,7 @@
         <h2>Create Your Account</h2>
         <p class="register-sub">Join SpeakMate and start your language journey today.</p>
 
-        <form (submit)="registerUser($event)">
+        <form (submit)="registerUser($event)" name="registerForm" #registerForm="ngForm">
           <label for="fullName">Full Name</label>
           <input
             type="text"
@@ -64,7 +64,14 @@
             Register
           </button>
 
-          <p *ngIf="message" class="register-message">{{ message }}</p>
+          <!-- ✅ Styled success/error message -->
+          <p
+            *ngIf="message"
+            [ngClass]="{ 'success': messageType === 'success', 'error': messageType === 'error' }"
+            class="register-message"
+          >
+            {{ message }}
+          </p>
         </form>
       </div>
     </main>
