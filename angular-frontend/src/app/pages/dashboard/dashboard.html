@@ -1,10 +1,67 @@
-<section class="dashboard">
- <h1>Welcome, {{ userName }}!</h1>
- <p>This is your dashboard.</p>
+<div class="page-wrapper">
+  <!-- Header (same structure as login page) -->
+  <header class="site-header">
+    <div class="container">
+      <div class="logo-nav">
+        <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+        <h1 class="site-title">SpeakMate</h1>
+      </div>
 
- <div class="actions">
-   <button routerLink="/lessons">View Lessons</button>
-   <button routerLink="/profile">My Profile</button>
-   <button routerLink="/progress">Track Progress</button>
- </div>
-</section>
+      <nav class="main-nav">
+        <ul>
+          <li><a routerLink="/">Home</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Resources</a></li>
+        </ul>
+      </nav>
+
+      <div class="auth-buttons">
+        <!-- Logout button -->
+        <button class="nav-btn nav-btn--logout" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="content-wrapper">
+    <section class="dashboard-hero">
+      <div class="dashboard-hero__inner">
+        <h1>Welcome, {{ userName }}!</h1>
+        <p>Your learning hub at a glance.</p>
+      </div>
+    </section>
+
+    <section class="dashboard-grid container">
+      <!-- Quick action cards -->
+      <a class="dash-card" routerLink="/lessons">
+        <div class="dash-card__icon">📚</div>
+        <h3 class="dash-card__title">View Lessons</h3>
+        <p class="dash-card__text">Continue where you left off.</p>
+      </a>
+
+      <a class="dash-card" routerLink="/resources">
+        <div class="dash-card__icon">🧭</div>
+        <h3 class="dash-card__title">Resources</h3>
+        <p class="dash-card__text">Practice materials & tips.</p>
+      </a>
+
+      <a class="dash-card" routerLink="/progress">
+        <div class="dash-card__icon">📈</div>
+        <h3 class="dash-card__title">Track Progress</h3>
+        <p class="dash-card__text">See your improvement over time.</p>
+      </a>
+
+      <a class="dash-card" routerLink="/profile">
+        <div class="dash-card__icon">👤</div>
+        <h3 class="dash-card__title">My Profile</h3>
+        <p class="dash-card__text">Manage your account details.</p>
+      </a>
+    </section>
+  </main>
+
+  <!-- Footer (same as login page) -->
+  <footer class="site-footer">
+    <p>&copy; {{ currentYear }} SpeakMate. All rights reserved.</p>
+  </footer>
+</div>

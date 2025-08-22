@@ -1,36 +1,101 @@
-.dashboard {
- max-width: 800px;
- margin: 50px auto;
- padding: 20px;
- background-color: #f3f3f3;
- border-radius: 10px;
- text-align: center;
- box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+/* HERO */
+.dashboard-hero {
+  background: linear-gradient(to right, #e0f2f1, #ffffff);
+  padding: 48px 16px;
+  text-align: center;
+}
+.dashboard-hero__inner h1 {
+  color: #00703c;
+  font-size: 2.2rem;
+  margin: 0 0 8px;
+}
+.dashboard-hero__inner p {
+  color: #444;
+  margin: 0;
+  font-size: 1.1rem;
 }
 
-.dashboard h1 {
- font-size: 2em;
- margin-bottom: 10px;
+/* GRID */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+  padding: 32px 16px 48px;
+  box-sizing: border-box;
 }
 
-.dashboard p {
- font-size: 1.1em;
- margin-bottom: 20px;
- color: #555;
+/* 4 cards on wide, 2 on tablet, 1 on mobile */
+.dash-card {
+  grid-column: span 3;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  padding: 22px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.dash-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(0,0,0,0.12);
+}
+.dash-card__icon {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+.dash-card__title {
+  margin: 0 0 6px;
+  color: #0b5e3b;
+  font-size: 1.25rem;
+}
+.dash-card__text {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
 }
 
-.actions button {
- margin: 10px;
- padding: 10px 20px;
- font-size: 1em;
- background: #007bff;
- color: white;
- border: none;
- border-radius: 6px;
- cursor: pointer;
- transition: background 0.3s ease;
+/* Header logout button harmonized with your theme */
+.nav-btn--logout {
+  background-color: #e63946;
+  border: none;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.nav-btn--logout:hover {
+  background-color: #c62836;
 }
 
-.actions button:hover {
- background: #0056b3;
+/* Responsive */
+@media (max-width: 1024px) {
+  .dash-card { grid-column: span 6; }
+}
+@media (max-width: 640px) {
+  .dash-card { grid-column: span 12; }
+  .dashboard-hero { padding: 36px 12px; }
+  .dashboard-hero__inner h1 { font-size: 1.9rem; }
+}
+/* Layout wrapper ensures footer sticks to bottom */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full viewport height */
+}
+
+.content-wrapper {
+  flex: 1; /* push footer down */
+}
+
+.site-footer {
+  margin-top: auto; /* ensures footer always stays at bottom */
+  background-color: #00703c;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 1rem;
 }

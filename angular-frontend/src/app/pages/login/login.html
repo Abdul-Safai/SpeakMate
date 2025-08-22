@@ -20,9 +20,7 @@
     </div>
   </header>
 
-  <!-- Main Content Wrapper -->
   <div class="content-wrapper">
-    <!-- Main Login Section -->
     <main class="login-main">
       <div class="login-box">
         <h2>Welcome Back!</h2>
@@ -60,13 +58,12 @@
             {{ loading ? 'Logging in…' : 'Login' }}
           </button>
 
-          <p *ngIf="message" class="login-message">{{ message }}</p>
+          <p *ngIf="message" class="login-message" role="alert">{{ message }}</p>
         </form>
       </div>
     </main>
   </div>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <p>&copy; 2025 SpeakMate. All rights reserved.</p>
   </footer>
