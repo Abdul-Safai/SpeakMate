@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService, AuthUser } from '../../core/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,51 +17,62 @@ export class LoginComponent {
   email = '';
   password = '';
   message = '';
+  loading = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private session: AuthService
+  ) {}
 
-  loginUser(event: Event) {
-    event.preventDefault();
+  loginUser() {
+    if (this.loading) return; // prevent double click
     this.message = '';
 
-    const trimmedEmail = this.email.trim().toLowerCase(); // ✅ keep this
-    const trimmedPassword = this.password.trim();
+    const email = this.email.trim().toLowerCase();
+    const password = this.password.trim();
 
-    console.log('Email entered:', `"${trimmedEmail}"`);
-    console.log('Password entered:', `"${trimmedPassword}"`);
+    console.log('[Login] Email:', JSON.stringify(email));
+    console.log('[Login] Password length:', password.length);
 
-    if (!trimmedEmail || !trimmedPassword) {
+    if (!email || !password) {
       this.message = 'Please fill in all fields.';
       return;
     }
 
-    const payload = {
-      email: trimmedEmail,
-      password: trimmedPassword
-    };
+    this.loading = true;
 
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.post<any>('http://localhost/SpeakMate/backend/api/login.php', { email, password })
+      .subscribe({
+        next: (res) => {
+          console.log('[Login] Response:', res);
+          this.loading = false;
 
-    this.http.post<any>(
-      'http://localhost/SpeakMate/backend/api/login.php',
-      payload,
-      { headers }
-    ).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.message = res.error || 'Login failed.';
+          if (res?.success && res?.user) {
+            const user: AuthUser = {
+              id: res.user.id,
+              email: res.user.email,
+              full_name: res.user.full_name
+            };
+            this.session.login(user);  // ✅ persist
+            this.router.navigate(['/dashboard']); // ✅ go to dashboard
+          } else {
+            this.message = res?.error || 'Login failed.';
+          }
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error('[Login] HTTP error:', err);
+          if (err.status === 0) {
+            this.message = 'Cannot reach server (CORS/network).';
+          } else if (err.status === 401) {
+            this.message = 'Invalid email or password.';
+          } else if (err.error?.error) {
+            this.message = err.error.error;
+          } else {
+            this.message = 'Error connecting to server.';
+          }
         }
-      },
-      error: (err) => {
-        console.error('Login error:', err);
-        if (err.status === 401) {
-          this.message = 'Invalid email or password.';
-        } else {
-          this.message = 'Error connecting to server.';
-        }
-      }
-    });
+      });
   }
 }

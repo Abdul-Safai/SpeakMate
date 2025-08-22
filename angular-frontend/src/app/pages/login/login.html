@@ -27,31 +27,37 @@
       <div class="login-box">
         <h2>Welcome Back!</h2>
         <p class="login-sub">Log in to continue your learning journey.</p>
-        <form (submit)="loginUser($event)">
+
+        <!-- Use ngSubmit so Angular handles it -->
+        <form (ngSubmit)="loginUser()" #f="ngForm" novalidate>
           <label for="email">Email</label>
           <input
+            id="email"
             type="email"
-            [(ngModel)]="email"
             name="email"
+            [(ngModel)]="email"
             required
             placeholder="Enter your email"
+            autocomplete="email"
           />
 
           <label for="password">Password</label>
           <input
+            id="password"
             type="password"
-            [(ngModel)]="password"
             name="password"
+            [(ngModel)]="password"
             required
             placeholder="Enter your password"
+            autocomplete="current-password"
           />
 
           <div class="forgot-password-link">
             <a routerLink="/forgot-password">Forgot password?</a>
           </div>
 
-          <button type="submit" class="login-btn" [disabled]="!email || !password">
-            Login
+          <button type="submit" class="login-btn" [disabled]="loading || !f.valid">
+            {{ loading ? 'Logging in…' : 'Login' }}
           </button>
 
           <p *ngIf="message" class="login-message">{{ message }}</p>
