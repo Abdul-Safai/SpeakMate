@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { AuthService, AuthUser } from '../../core/auth.service';
 
 @Component({
@@ -22,6 +21,7 @@ export class LoginComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private route: ActivatedRoute,
     private session: AuthService
   ) {}
 
@@ -45,17 +45,22 @@ export class LoginComponent {
     this.http.post<any>('http://localhost/SpeakMate/backend/api/login.php', { email, password })
       .subscribe({
         next: (res) => {
-          console.log('[Login] Response:', res);
           this.loading = false;
+          console.log('[Login] Response:', res);
 
           if (res?.success && res?.user) {
             const user: AuthUser = {
               id: res.user.id,
               email: res.user.email,
-              full_name: res.user.full_name
+              full_name: res.user.full_name,
+              token: res.token // ok if undefined
             };
-            this.session.login(user);  // ✅ persist
-            this.router.navigate(['/dashboard']); // ✅ go to dashboard
+            this.session.login(user);
+
+            // If guard set ?returnUrl=..., respect it; otherwise go to /dashboard
+            const returnUrl =
+              this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+            this.router.navigateByUrl(returnUrl);
           } else {
             this.message = res?.error || 'Login failed.';
           }

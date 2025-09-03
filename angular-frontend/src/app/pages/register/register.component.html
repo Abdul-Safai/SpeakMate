@@ -8,7 +8,8 @@
       </div>
       <nav class="main-nav">
         <ul>
-          <li><a routerLink="/">Home</a></li>
+          <!-- Route to login for "Home" to avoid unexpected redirects -->
+          <li><a routerLink="/login">Home</a></li>
           <li><a href="#">About Us</a></li>
           <li><a href="#">Courses</a></li>
           <li><a href="#">Resources</a></li>
@@ -28,9 +29,11 @@
         <h2>Create Your Account</h2>
         <p class="register-sub">Join SpeakMate and start your language journey today.</p>
 
-        <form (submit)="registerUser($event)" name="registerForm" #registerForm="ngForm">
+        <!-- Use Angular's ngSubmit for cleaner handling -->
+        <form (ngSubmit)="registerUser()" #registerForm="ngForm" novalidate>
           <label for="fullName">Full Name</label>
           <input
+            id="fullName"
             type="text"
             [(ngModel)]="fullName"
             name="fullName"
@@ -40,6 +43,7 @@
 
           <label for="email">Email</label>
           <input
+            id="email"
             type="email"
             [(ngModel)]="email"
             name="email"
@@ -49,6 +53,7 @@
 
           <label for="password">Password</label>
           <input
+            id="password"
             type="password"
             [(ngModel)]="password"
             name="password"
@@ -59,12 +64,12 @@
           <button
             type="submit"
             class="register-btn"
-            [disabled]="!fullName || !email || !password"
+            [disabled]="loading || !registerForm.valid"
           >
-            Register
+            {{ loading ? 'Registering…' : 'Register' }}
           </button>
 
-          <!-- ✅ Styled success/error message -->
+          <!-- Styled success/error message -->
           <p
             *ngIf="message"
             [ngClass]="{ 'success': messageType === 'success', 'error': messageType === 'error' }"

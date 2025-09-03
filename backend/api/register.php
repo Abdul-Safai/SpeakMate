@@ -1,112 +1,136 @@
 <?php
 // backend/api/register.php
-error_log("🚀 register.php was triggered");
 
-header("Access-Control-Allow-Origin: *");
+// ---- CORS / JSON headers (align with login.php) ----
+header("Access-Control-Allow-Origin: http://localhost:4200");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json; charset=utf-8");
 
+// Dev logging (remove in prod)
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+// Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
+  http_response_code(204);
+  exit;
 }
 
-$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-if ($contentType === 'application/json') {
-    $data = json_decode(file_get_contents("php://input"), true);
-    $full_name = trim($data['full_name'] ?? '');
-    $email     = strtolower(trim($data['email'] ?? '')); // ✅ Force lowercase
-    $password  = trim($data['password'] ?? '');
-} else {
-    $full_name = trim($_POST['full_name'] ?? '');
-    $email     = strtolower(trim($_POST['email'] ?? '')); // ✅ Force lowercase fallback
-    $password  = trim($_POST['password'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  http_response_code(405);
+  echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+  exit;
 }
 
-// Log raw input
-error_log("📥 Register Input — Name: $full_name | Email: $email | Password Length: " . strlen($password));
+// ---- Parse body: prefer JSON; fallback to form-encoded ----
+$raw = file_get_contents('php://input');
+$input = json_decode($raw, true);
 
-if (!$full_name || !$email || !$password) {
-    http_response_code(400);
-    echo json_encode(["error" => "Missing required fields"]);
-    exit;
+// If not JSON or empty, fallback to POST (e.g., from form submit)
+if (!is_array($input) || empty($input)) {
+  $input = $_POST;
 }
 
-require_once("../config/database.php");
-require '../vendor/autoload.php'; // PHPMailer autoload
+$full_name = trim((string)($input['full_name'] ?? ''));
+$email     = strtolower(trim((string)($input['email'] ?? '')));
+$password  = (string)($input['password'] ?? '');
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+// Basic validation
+if ($full_name === '' || $email === '' || $password === '') {
+  http_response_code(400);
+  echo json_encode(['success' => false, 'error' => 'Full name, email and password are required.']);
+  exit;
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  http_response_code(400);
+  echo json_encode(['success' => false, 'error' => 'Invalid email format.']);
+  exit;
+}
+if (strlen($password) < 8) { // adjust policy as you like
+  http_response_code(400);
+  echo json_encode(['success' => false, 'error' => 'Password must be at least 8 characters.']);
+  exit;
+}
 
-// Log and hash password
-error_log("🔐 Password received for hashing: $password");
+// Hash the password
+$hash = password_hash($password, PASSWORD_DEFAULT);
 
-$password_hash = password_hash($password, PASSWORD_DEFAULT);
-error_log("🧠 Hashed password: $password_hash");
+require_once(__DIR__ . '/../config/database.php'); // must define $db (PDO)
 
-// Check for duplicate email
-$query = "SELECT id FROM users WHERE email = :email";
-$stmt = $db->prepare($query);
-$stmt->bindValue(':email', $email);
-$stmt->execute();
+try {
+  // Throw exceptions on SQL errors
+  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if ($stmt->rowCount() > 0) {
+  // Case-insensitive duplicate check
+  $check = $db->prepare("SELECT id FROM users WHERE LOWER(email) = :email LIMIT 1");
+  $check->execute([':email' => $email]);
+  if ($check->fetch()) {
     http_response_code(409);
-    echo json_encode(["error" => "Email already registered"]);
+    echo json_encode(['success' => false, 'error' => 'Email already registered.']);
     exit;
-}
+  }
 
-// Insert user
-$query = "INSERT INTO users (full_name, email, password_hash) 
-          VALUES (:full_name, :email, :password_hash)";
-$stmt = $db->prepare($query);
-$stmt->bindParam(':full_name', $full_name);
-$stmt->bindParam(':email', $email);
-$stmt->bindParam(':password_hash', $password_hash);
+  // Insert user (ensure password_hash column exists and is VARCHAR(255))
+  $ins = $db->prepare("
+    INSERT INTO users (full_name, email, password_hash)
+    VALUES (:full_name, :email, :hash)
+  ");
+  $ins->execute([
+    ':full_name' => $full_name,
+    ':email'     => $email,
+    ':hash'      => $hash,
+  ]);
 
-error_log("💾 Attempting to insert: $full_name | $email | HASH: $password_hash");
+  // Optionally send a welcome email (only if SMTP env vars are configured)
+  $smtpUser = getenv('SMTP_USER') ?: 'myclass.practice@gmail.com'; // change/remove defaults
+  $smtpPass = getenv('SMTP_PASS') ?: '';                           // store securely, not in source
+  $sentMail = false;
+  $mailError = null;
 
-if ($stmt->execute()) {
-    error_log("✅ Insert successful for user: $email");
-
-    // Send confirmation email
-    $mail = new PHPMailer(true);
-    try {
-        // Server settings
+  if ($smtpUser && $smtpPass) {
+    $autoload = __DIR__ . '/../vendor/autoload.php';
+    if (file_exists($autoload)) {
+      require $autoload;
+      try {
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'myclass.practice@gmail.com'; // 🔁 Replace with yours
-        $mail->Password = 'doaqfikprkljvptn';           // 🔁 Replace with your App Password
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $smtpUser;
+        $mail->Password   = $smtpPass;       // App Password recommended
         $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+        $mail->Port       = 587;
 
-        // Recipients
-        $mail->setFrom('myclass.practice@gmail.com', 'SpeakMate');
+        $mail->setFrom($smtpUser, 'SpeakMate');
         $mail->addAddress($email, $full_name);
 
-        // Content
         $mail->isHTML(true);
         $mail->Subject = 'Welcome to SpeakMate!';
-        $mail->Body    = "
-            <h3>Hello {$full_name},</h3>
-            <p>Thank you for registering at <strong>SpeakMate</strong>.</p>
-            <p>We’re excited to help you on your language journey.</p>
-            <p>Best regards,<br/>SpeakMate Team</p>
-        ";
-
+        $mail->Body    = "<h3>Hello " . htmlspecialchars($full_name) . ",</h3>
+                          <p>Thanks for registering at <strong>SpeakMate</strong>.</p>
+                          <p>We’re excited to help you on your language journey.</p>
+                          <p>— SpeakMate Team</p>";
         $mail->send();
-        echo json_encode(["success" => true, "message" => "User registered successfully and confirmation email sent"]);
-    } catch (Exception $e) {
-        error_log("📧 Email sending failed: " . $mail->ErrorInfo);
-        echo json_encode(["success" => true, "message" => "Registered, but email failed to send: {$mail->ErrorInfo}"]);
+        $sentMail = true;
+      } catch (Throwable $e) {
+        $mailError = $e->getMessage();
+        // Don’t fail the registration if email fails
+      }
     }
-} else {
-    error_log("❌ Insert failed for: $email");
-    http_response_code(500);
-    echo json_encode(["error" => "Registration failed"]);
+  }
+
+  http_response_code(201);
+  echo json_encode([
+    'success' => true,
+    'message' => $sentMail ? 'User registered and email sent.' : 'User registered.',
+    'email_sent' => $sentMail,
+    'email_error' => $sentMail ? null : $mailError
+  ]);
+} catch (Throwable $e) {
+  // Log details server-side; generic error to client
+  error_log('[register.php] ' . $e->getMessage());
+  http_response_code(500);
+  echo json_encode(['success' => false, 'error' => 'Server error.']);
 }

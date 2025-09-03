@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -17,41 +17,49 @@ export class RegisterComponent {
   password = '';
   message = '';
   messageType: 'success' | 'error' = 'success';
+  loading = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  registerUser(event: Event) {
-    event.preventDefault();
+  registerUser() {
+    if (this.loading) return;
+    this.message = '';
+    this.messageType = 'success';
 
     const payload = {
       full_name: this.fullName.trim(),
-      email: this.email.trim().toLowerCase(), // ✅ force lowercase before saving
-      password: this.password.trim()
+      email: this.email.trim().toLowerCase(),
+      password: this.password.trim(),
     };
 
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (!payload.full_name || !payload.email || !payload.password) {
+      this.messageType = 'error';
+      this.message = 'Please fill in all fields.';
+      return;
+    }
 
-    this.http.post<any>(
-      'http://localhost/SpeakMate/backend/api/register.php',
-      payload,
-      { headers }
-    ).subscribe({
-      next: (response) => {
-        console.log('✅ Registration response:', response);
-        this.messageType = 'success';
-        this.message = response.message || 'Registration successful!';
-        this.resetForm();
+    this.loading = true;
 
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
-      },
-      error: (error) => {
-        console.error('❌ Registration error:', error);
-        this.messageType = 'error';
-        this.message = error.error?.error || 'Error connecting to server.';
-      }
-    });
+    this.http.post<any>('http://localhost/SpeakMate/backend/api/register.php', payload)
+      .subscribe({
+        next: (response) => {
+          this.loading = false;
+          console.log('✅ Registration response:', response);
+          this.messageType = 'success';
+          this.message = response?.message || 'Registration successful! Redirecting to login…';
+          this.resetForm();
+
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 1500);
+        },
+        error: (error) => {
+          this.loading = false;
+          console.error('❌ Registration error:', error);
+          this.messageType = 'error';
+          this.message = error?.error?.error || 'Error connecting to server.';
+        }
+      });
   }
 
   private resetForm() {
