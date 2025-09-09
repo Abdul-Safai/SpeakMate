@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global header spacing */
+:root {
+  --header-gap: 12px; /* tweak to 16px/20px if you want more space */
+}
+
+/* Works for all pages that use either of these containers */
+:where(.auth-buttons, .header-button) {
+  display: flex;
+  align-items: center;
+  gap: var(--header-gap);
+}
+
+/* Fallback if gap isn’t supported */
+.auth-buttons .nav-btn + .nav-btn,
+.header-button a + a {
+  margin-left: var(--header-gap);
+}
