@@ -3,18 +3,21 @@
   <header class="site-header">
     <div class="container">
       <div class="logo-nav">
-        <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+        <a routerLink="/home" aria-label="Go to Home">
+          <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+        </a>
         <h1 class="site-title">SpeakMate</h1>
       </div>
+
       <nav class="main-nav">
         <ul>
-          <!-- Route to login for "Home" since '/' redirects to 'login' -->
-        <li><a routerLink="/login">Home</a></li>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Courses</a></li>
-          <li><a href="#">Resources</a></li>
+          <li><a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a></li>
+          <li><a routerLink="/about" routerLinkActive="active">About Us</a></li>
+          <li><a routerLink="/courses" routerLinkActive="active">Courses</a></li>
+          <li><a routerLink="/resources" routerLinkActive="active">Resources</a></li>
         </ul>
       </nav>
+
       <div class="auth-buttons">
         <a class="nav-btn" routerLink="/register">Register</a>
       </div>
@@ -29,29 +32,12 @@
         <h2>Welcome Back!</h2>
         <p class="login-sub">Log in to continue your learning journey.</p>
 
-        <!-- Use ngSubmit so Angular handles it -->
         <form (ngSubmit)="loginUser()" #f="ngForm" novalidate>
           <label for="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            [(ngModel)]="email"
-            required
-            placeholder="Enter your email"
-            autocomplete="email"
-          />
+          <input id="email" type="email" name="email" [(ngModel)]="email" required placeholder="Enter your email" autocomplete="email" />
 
           <label for="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            [(ngModel)]="password"
-            required
-            placeholder="Enter your password"
-            autocomplete="current-password"
-          />
+          <input id="password" type="password" name="password" [(ngModel)]="password" required placeholder="Enter your password" autocomplete="current-password" />
 
           <div class="forgot-password-link">
             <a routerLink="/forgot-password">Forgot password?</a>

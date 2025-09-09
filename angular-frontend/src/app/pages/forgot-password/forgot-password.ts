@@ -1,52 +1,56 @@
+// src/app/pages/forgot-password/forgot-password.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './forgot-password.html',
-  styleUrls: ['../login/login.css', './forgot-password.css']
+  styleUrls: ['./forgot-password.css']
 })
 export class ForgotPasswordComponent {
-  email: string = '';
-  message: string = '';
-  error: string = '';
+  email = '';
+  message = '';
+  error = '';
+  loading = false;
 
   constructor(private http: HttpClient) {}
 
   sendResetLink() {
+    if (this.loading) return;
+
     this.message = '';
     this.error = '';
 
-    if (!this.email) {
-      this.error = 'Email is required.';
+    const email = this.email.trim().toLowerCase();
+    if (!email) {
+      this.error = 'Please enter your email.';
       return;
     }
 
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const body = { email: this.email };
+    this.loading = true;
 
-    this.http.post<any>(
-      'http://localhost/SpeakMate/backend/api/send_reset_link.php',
-      body,
-      { headers }
-    ).subscribe({
-      next: (response) => {
-        console.log('✅ Response:', response); // <-- ✅ LOG SUCCESSFUL RESPONSE
-        if (response.success) {
-          this.message = response.message;
-          this.email = '';
-        } else {
-          this.error = response.error || 'Failed to send reset email.';
+    // Adjust endpoint if your backend uses a different path/name
+    this.http.post<any>('http://localhost/SpeakMate/backend/api/forgot-password.php', { email })
+      .subscribe({
+        next: (res) => {
+          this.loading = false;
+          if (res?.success) {
+            this.message = res?.message || 'If this email exists, a reset link has been sent.';
+          } else {
+            this.error = res?.error || 'Unable to send reset link.';
+          }
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error =
+            err?.error?.error ||
+            (err.status === 0 ? 'Cannot reach server (CORS/network).' : 'Error connecting to server.');
         }
-      },
-      error: (err) => {
-        console.error('❌ Error sending email:', err); // <-- ✅ LOG ERROR RESPONSE
-        this.error = err?.error?.error || 'Error sending reset email.';
-      }
-    });
+      });
   }
 }

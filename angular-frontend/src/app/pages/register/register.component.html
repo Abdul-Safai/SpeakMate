@@ -3,16 +3,17 @@
   <header class="site-header">
     <div class="container">
       <div class="logo-nav">
-        <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+        <a routerLink="/home" aria-label="Go to Home">
+          <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+        </a>
         <h1 class="site-title">SpeakMate</h1>
       </div>
       <nav class="main-nav">
         <ul>
-          <!-- Route to login for "Home" to avoid unexpected redirects -->
-          <li><a routerLink="/login">Home</a></li>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Courses</a></li>
-          <li><a href="#">Resources</a></li>
+          <li><a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a></li>
+          <li><a routerLink="/about" routerLinkActive="active">About Us</a></li>
+          <li><a routerLink="/courses" routerLinkActive="active">Courses</a></li>
+          <li><a routerLink="/resources" routerLinkActive="active">Resources</a></li>
         </ul>
       </nav>
       <div class="auth-buttons">
@@ -29,52 +30,21 @@
         <h2>Create Your Account</h2>
         <p class="register-sub">Join SpeakMate and start your language journey today.</p>
 
-        <!-- Use Angular's ngSubmit for cleaner handling -->
         <form (ngSubmit)="registerUser()" #registerForm="ngForm" novalidate>
           <label for="fullName">Full Name</label>
-          <input
-            id="fullName"
-            type="text"
-            [(ngModel)]="fullName"
-            name="fullName"
-            required
-            placeholder="Enter your full name"
-          />
+          <input id="fullName" type="text" [(ngModel)]="fullName" name="fullName" required placeholder="Enter your full name" />
 
           <label for="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            [(ngModel)]="email"
-            name="email"
-            required
-            placeholder="Enter your email"
-          />
+          <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder="Enter your email" />
 
           <label for="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            [(ngModel)]="password"
-            name="password"
-            required
-            placeholder="Create a password"
-          />
+          <input id="password" type="password" [(ngModel)]="password" name="password" required placeholder="Create a password" />
 
-          <button
-            type="submit"
-            class="register-btn"
-            [disabled]="loading || !registerForm.valid"
-          >
+          <button type="submit" class="register-btn" [disabled]="loading || !registerForm.valid">
             {{ loading ? 'Registering…' : 'Register' }}
           </button>
 
-          <!-- Styled success/error message -->
-          <p
-            *ngIf="message"
-            [ngClass]="{ 'success': messageType === 'success', 'error': messageType === 'error' }"
-            class="register-message"
-          >
+          <p *ngIf="message" [ngClass]="{ 'success': messageType === 'success', 'error': messageType === 'error' }" class="register-message">
             {{ message }}
           </p>
         </form>

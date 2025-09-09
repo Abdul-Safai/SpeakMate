@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, AuthUser } from '../../core/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  // Use directives directly so routerLink/routerLinkActive work in the template
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './login.html',
   styleUrls: ['./login.css', '../home/home.css']
 })
@@ -26,14 +27,11 @@ export class LoginComponent {
   ) {}
 
   loginUser() {
-    if (this.loading) return; // prevent double click
+    if (this.loading) return;
     this.message = '';
 
     const email = this.email.trim().toLowerCase();
     const password = this.password.trim();
-
-    console.log('[Login] Email:', JSON.stringify(email));
-    console.log('[Login] Password length:', password.length);
 
     if (!email || !password) {
       this.message = 'Please fill in all fields.';
@@ -46,20 +44,17 @@ export class LoginComponent {
       .subscribe({
         next: (res) => {
           this.loading = false;
-          console.log('[Login] Response:', res);
 
           if (res?.success && res?.user) {
             const user: AuthUser = {
               id: res.user.id,
               email: res.user.email,
               full_name: res.user.full_name,
-              token: res.token // ok if undefined
+              token: res.token
             };
             this.session.login(user);
 
-            // If guard set ?returnUrl=..., respect it; otherwise go to /dashboard
-            const returnUrl =
-              this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+            const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
             this.router.navigateByUrl(returnUrl);
           } else {
             this.message = res?.error || 'Login failed.';
@@ -67,16 +62,10 @@ export class LoginComponent {
         },
         error: (err) => {
           this.loading = false;
-          console.error('[Login] HTTP error:', err);
-          if (err.status === 0) {
-            this.message = 'Cannot reach server (CORS/network).';
-          } else if (err.status === 401) {
-            this.message = 'Invalid email or password.';
-          } else if (err.error?.error) {
-            this.message = err.error.error;
-          } else {
-            this.message = 'Error connecting to server.';
-          }
+          if (err.status === 0) this.message = 'Cannot reach server (CORS/network).';
+          else if (err.status === 401) this.message = 'Invalid email or password.';
+          else if (err.error?.error) this.message = err.error.error;
+          else this.message = 'Error connecting to server.';
         }
       });
   }

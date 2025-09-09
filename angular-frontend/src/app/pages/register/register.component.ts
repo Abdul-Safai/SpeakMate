@@ -1,13 +1,15 @@
+// src/app/pages/register/register.component.ts
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  // router directives are used in the template header
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './register.component.html',
   styleUrls: ['./register.css']
 })
@@ -44,18 +46,13 @@ export class RegisterComponent {
       .subscribe({
         next: (response) => {
           this.loading = false;
-          console.log('✅ Registration response:', response);
           this.messageType = 'success';
           this.message = response?.message || 'Registration successful! Redirecting to login…';
           this.resetForm();
-
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 1500);
+          setTimeout(() => this.router.navigate(['/login']), 1500);
         },
         error: (error) => {
           this.loading = false;
-          console.error('❌ Registration error:', error);
           this.messageType = 'error';
           this.message = error?.error?.error || 'Error connecting to server.';
         }
