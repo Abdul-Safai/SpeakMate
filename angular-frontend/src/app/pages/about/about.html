@@ -1,4 +1,6 @@
+<!-- src/app/pages/about/about.html -->
 <div class="page-wrapper">
+  <!-- ===== Header (unchanged) ===== -->
   <header class="site-header">
     <div class="container">
       <div class="logo-nav">
@@ -22,11 +24,117 @@
     </div>
   </header>
 
-  <main class="content-wrapper container" style="padding: 32px 0;">
-    <h2>About SpeakMate</h2>
-    <p>About content…</p>
-  </main>
+ <main class="about-page">
+  <!-- Hero -->
+  <section class="about-hero">
+    <div class="about-hero__text">
+      <h3 class="about-kicker">Built for newcomers</h3>
+      <h2 class="about-title">Learn practical English for real life in Canada</h2>
+      <p class="about-lead">
+        Short lessons, real dialogs, and friendly audio practice—so you can
+        handle transit, clinics, jobs, and everyday conversations with confidence.
+      </p>
+      <div class="cta-row">
+        <a routerLink="/register" class="btn btn--primary">Get Started</a>
+        <a routerLink="/courses" class="btn btn--ghost">Explore Courses</a>
+      </div>
+    </div>
 
+    <div class="about-hero__card">
+      <div class="stat">
+        <div class="stat__num">5–10</div>
+        <div class="stat__label">min lessons</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">100+</div>
+        <div class="stat__label">topics</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">Audio</div>
+        <div class="stat__label">with slow mode</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What we do -->
+  <section class="about-section">
+    <h3 class="section-title">What makes SpeakMate different</h3>
+    <div class="grid grid--3">
+      <article class="card">
+        <div class="card__icon">🎯</div>
+        <h4 class="card__title">Practical first</h4>
+        <p class="card__text">Phrases you’ll use today—at stores, clinics, banks, and work.</p>
+      </article>
+      <article class="card">
+        <div class="card__icon">🗣️</div>
+        <h4 class="card__title">Speak with confidence</h4>
+        <p class="card__text">Listen, repeat, and build natural conversation habits.</p>
+      </article>
+      <article class="card">
+        <div class="card__icon">🤝</div>
+        <h4 class="card__title">Learn together</h4>
+        <p class="card__text">Community tips, cultural notes, and friendly support.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="about-section">
+    <h3 class="section-title">How SpeakMate works</h3>
+    <div class="grid grid--5">
+      <article class="card mini"><h4>Short lessons</h4><p>Mobile-friendly sessions that fit your day.</p></article>
+      <article class="card mini"><h4>Real dialogs</h4><p>Transit, healthcare, school, work & more.</p></article>
+      <article class="card mini"><h4>Audio + slow mode</h4><p>Hear natural pace, then slower to catch every word.</p></article>
+      <article class="card mini"><h4>Practice & review</h4><p>Quick checks, speaking prompts, spaced review.</p></article>
+      <article class="card mini"><h4>Progress</h4><p>Streaks, badges, and completed topics.</p></article>
+    </div>
+  </section>
+
+  <!-- Who it's for -->
+  <section class="about-section">
+    <h3 class="section-title">Who it’s for</h3>
+    <div class="pill-row">
+      <span class="pill">Newcomers to Canada</span>
+      <span class="pill">True beginners</span>
+      <span class="pill">Busy learners</span>
+    </div>
+  </section>
+
+  <!-- Topics -->
+  <section class="about-section">
+    <h3 class="section-title">Topics you’ll learn</h3>
+    <div class="grid grid--4">
+      <article class="card"><h4 class="card__title">Survival English</h4><p class="card__text">Transit, directions, banking, phone calls.</p></article>
+      <article class="card"><h4 class="card__title">Healthcare</h4><p class="card__text">Appointments, symptoms, prescriptions.</p></article>
+      <article class="card"><h4 class="card__title">Workplace English</h4><p class="card__text">Introductions, meetings, emails, small talk.</p></article>
+      <article class="card"><h4 class="card__title">Community Life</h4><p class="card__text">School, housing, shopping, services.</p></article>
+    </div>
+  </section>
+
+  <!-- Trust / quote -->
+  <section class="about-quote">
+    <blockquote>
+      “I used SpeakMate on the bus every day. After two weeks, I felt ready for my
+      first clinic visit without help.”
+    </blockquote>
+    <div class="quote-meta">— Sara • newcomer from Morocco</div>
+  </section>
+
+  <!-- Final CTA (Login primary) -->
+  <section class="cta-bar">
+    <div class="cta-bar__text">
+      <h3>Ready to begin?</h3>
+      <p>Join free, pick a topic, and complete your first lesson in minutes.</p>
+      <p class="cta-hint">New here? <a routerLink="/register">Create an account</a></p>
+    </div>
+    <div class="cta-bar__actions">
+      <a routerLink="/login" class="btn btn--primary">Login</a>
+      <a routerLink="/resources" class="btn btn--ghost">Browse Resources</a>
+    </div>
+  </section>
+</main>
+
+  <!-- ===== Footer (unchanged) ===== -->
   <footer class="site-footer">
     <p>&copy; 2025 SpeakMate. All rights reserved.</p>
   </footer>

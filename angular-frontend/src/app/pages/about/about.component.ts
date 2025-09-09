@@ -1,12 +1,13 @@
+// src/app/pages/about/about.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterModule } from '@angular/router'; // brings RouterLink + RouterLinkActive (+ options)
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterModule],
   templateUrl: './about.html',
-  styleUrls: ['../home/home.css']
+  styleUrls: ['./about.css', '../home/home.css']
 })
 export class AboutComponent {}

@@ -19,9 +19,80 @@
       </nav>
 
       <div class="auth-buttons">
-        <a routerLink="/register" class="nav-btn">Register</a>
-        <a routerLink="/login" class="nav-btn">Login</a>
+        <a class="nav-btn" routerLink="/register">Register</a>
+        <a class="nav-btn" routerLink="/login">Login</a>
       </div>
     </div>
   </header>
-  <!-- rest of file unchanged -->
+
+  <main class="main-content">
+    <section class="hero"></section>
+
+    <section class="welcome">
+      <div class="welcome-content">
+        <h2>Welcome to SpeakMate</h2>
+        <p>Empowering newcomers in Canada to learn English through real-life lessons and interactive resources.</p>
+        <a routerLink="/register" class="btn">Get Started</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="features-container">
+        <h2 class="section-title">Why Choose SpeakMate?</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon">🗣️</div>
+            <h3>Real-Life English</h3>
+            <p>Practice English with real-world conversations — grocery shopping, job interviews, transit, and more.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🌱</div>
+            <h3>Beginner Friendly</h3>
+            <p>Step-by-step guidance and audio support to help you build confidence from the basics.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">📊</div>
+            <h3>Progress Tracking</h3>
+            <p>Keep track of your learning journey with milestones and personalized feedback.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🤝</div>
+            <h3>Community Support</h3>
+            <p>Connect with other newcomers, share experiences, and grow together through discussion and encouragement.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="highlights">
+      <h2>Explore Our Courses</h2>
+      <div class="highlight-boxes">
+        <div class="highlight">
+          <div class="highlight-icon">📚</div>
+          <h4>Beginner English</h4>
+          <p>Build a strong foundation with basic grammar, vocabulary, and daily conversation skills.</p>
+        </div>
+        <div class="highlight">
+          <div class="highlight-icon">🛒</div>
+          <h4>Survival English</h4>
+          <p>Master everyday situations like grocery shopping, visiting doctors, or using public transport.</p>
+        </div>
+        <div class="highlight">
+          <div class="highlight-icon">💼</div>
+          <h4>Workplace English</h4>
+          <p>Learn professional communication skills for interviews, resumes, and team collaboration.</p>
+        </div>
+        <div class="highlight">
+          <div class="highlight-icon">🧠</div>
+          <h4>Listening Practice</h4>
+          <p>Improve your understanding through audio lessons, conversations, and real-world examples.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 SpeakMate. All rights reserved.</p>
+    <button class="scroll-top-btn" (click)="scrollToTop()" *ngIf="isVisible" aria-label="Scroll to top">⬆</button>
+  </footer>
+</div>
