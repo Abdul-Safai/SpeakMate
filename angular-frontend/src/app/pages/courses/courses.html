@@ -1,4 +1,5 @@
 <div class="page-wrapper">
+  <!-- Header (unchanged style, with auth buttons) -->
   <header class="site-header">
     <div class="container">
       <div class="logo-nav">
@@ -7,6 +8,7 @@
         </a>
         <h1 class="site-title">SpeakMate</h1>
       </div>
+
       <nav class="main-nav">
         <ul>
           <li><a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a></li>
@@ -15,18 +17,249 @@
           <li><a routerLink="/resources" routerLinkActive="active">Resources</a></li>
         </ul>
       </nav>
-       <div class="auth-buttons">
+
+      <div class="auth-buttons">
         <a routerLink="/register" class="nav-btn">Register</a>
         <a routerLink="/login" class="nav-btn">Login</a>
       </div>
     </div>
   </header>
 
-  <main class="content-wrapper container" style="padding: 32px 0;">
-    <h2>Courses</h2>
-    <p>Courses content…</p>
+  <!-- Main -->
+  <main class="courses-page">
+    <!-- Hero -->
+    <section class="courses-hero">
+      <div class="hero-text">
+        <h3 class="kicker">Learn English with confidence</h3>
+        <h2 class="title">English Courses for Real Life in Canada</h2>
+        <p class="lead">
+          Bite-size lessons, real dialogs, and guided practice. Choose a level or follow a track —
+          study anywhere, anytime.
+        </p>
+        <div class="cta-row">
+          <a routerLink="/register" class="btn btn--primary">Start Free</a>
+          <a routerLink="/resources" class="btn btn--ghost">See Resources</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="pill">A1–B2</div>
+        <div class="stat">
+          <div class="num">10–15</div>
+          <div class="label">min / lesson</div>
+        </div>
+        <div class="stat">
+          <div class="num">120+</div>
+          <div class="label">topics</div>
+        </div>
+        <div class="stat">
+          <div class="num">Audio</div>
+          <div class="label">with slow mode</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Tracks -->
+    <section class="section">
+      <h3 class="section-title">Popular Tracks</h3>
+      <div class="grid grid--3">
+        <!-- Survival English -->
+        <article class="card track">
+          <img src="assets/images/courses/track-survival.png"
+               alt="Learners practicing transit and shopping conversations"
+               class="card-img" loading="lazy" width="640" height="360" />
+          <div class="badge badge--green">Beginner · A1</div>
+          <h4 class="card-title">Survival English</h4>
+          <p class="card-text">
+            Transit, directions, shopping, banking, and calling services — everything you need in week one.
+          </p>
+          <ul class="meta">
+            <li>18 lessons</li>
+            <li>Audio + slow mode</li>
+            <li>Speaking prompts</li>
+          </ul>
+          <div class="actions">
+            <a routerLink="/register" class="btn btn--primary">Start Track</a>
+            <a routerLink="/about" class="btn btn--ghost">Details</a>
+          </div>
+        </article>
+
+        <!-- Healthcare English -->
+        <article class="card track">
+          <img src="assets/images/courses/Healthcare English.png"
+               alt="Small group role-play at a clinic reception"
+               class="card-img" loading="lazy" width="640" height="360" />
+          <div class="badge badge--blue">Elementary · A2</div>
+          <h4 class="card-title">Healthcare English</h4>
+          <p class="card-text">
+            Booking appointments, describing symptoms, prescriptions, forms, and pharmacy conversations.
+          </p>
+          <ul class="meta">
+            <li>16 lessons</li>
+            <li>Real dialogs</li>
+            <li>Printable phrases</li>
+          </ul>
+          <div class="actions">
+            <a routerLink="/register" class="btn btn--primary">Start Track</a>
+            <a routerLink="/about" class="btn btn--ghost">Details</a>
+          </div>
+        </article>
+
+        <!-- Workplace English -->
+        <article class="card track">
+          <img src="assets/images/courses/Workplace English.png"
+               alt="Learners preparing for interviews and office conversations"
+               class="card-img" loading="lazy" width="640" height="360" />
+          <div class="badge badge--purple">Pre-intermediate · B1</div>
+          <h4 class="card-title">Workplace English</h4>
+          <p class="card-text">
+            Intros, small talk, meetings, email style, feedback, and interview practice with examples.
+          </p>
+          <ul class="meta">
+            <li>20 lessons</li>
+            <li>Templates &amp; tips</li>
+            <li>Role-play prompts</li>
+          </ul>
+          <div class="actions">
+            <a routerLink="/register" class="btn btn--primary">Start Track</a>
+            <a routerLink="/about" class="btn btn--ghost">Details</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Course Catalog -->
+    <section class="section">
+      <h3 class="section-title">Course Catalog</h3>
+      <div class="filters">
+        <span class="chip">All</span>
+        <span class="chip">A1</span>
+        <span class="chip">A2</span>
+        <span class="chip">B1</span>
+        <span class="chip">B2</span>
+        <span class="chip">Speaking</span>
+        <span class="chip">Listening</span>
+        <span class="chip">Grammar</span>
+      </div>
+
+      <div class="grid grid--4">
+        <!-- Card 1 -->
+        <article class="card">
+          <div class="badge badge--green">A1</div>
+          <h4 class="card-title">Everyday Basics</h4>
+          <p class="card-text">Greetings, numbers, time, simple questions, polite forms.</p>
+          <div class="row">
+            <span class="pill">12 lessons</span>
+            <span class="pill">Audio</span>
+          </div>
+          <a routerLink="/register" class="btn btn--line">Enroll</a>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="card">
+          <div class="badge badge--blue">A2</div>
+          <h4 class="card-title">Shopping &amp; Services</h4>
+          <p class="card-text">Returns, warranties, phone plans, delivery, appointments.</p>
+          <div class="row">
+            <span class="pill">14 lessons</span>
+            <span class="pill">Dialogs</span>
+          </div>
+          <a routerLink="/register" class="btn btn--line">Enroll</a>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="card">
+          <div class="badge badge--purple">B1</div>
+          <h4 class="card-title">Workplace Small Talk</h4>
+          <p class="card-text">Build rapport, join conversations, and sound natural at work.</p>
+          <div class="row">
+            <span class="pill">10 lessons</span>
+            <span class="pill">Speaking</span>
+          </div>
+          <a routerLink="/register" class="btn btn--line">Enroll</a>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="card">
+          <div class="badge badge--purple">B1</div>
+          <h4 class="card-title">Email &amp; Messages</h4>
+          <p class="card-text">Clear, polite writing for requests, updates, and follow-ups.</p>
+          <div class="row">
+            <span class="pill">12 lessons</span>
+            <span class="pill">Templates</span>
+          </div>
+          <a routerLink="/register" class="btn btn--line">Enroll</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Learners in Action (gallery) -->
+    <section class="section">
+      <h3 class="section-title">Learners in Action</h3>
+      <div class="photo-grid">
+        <figure class="photo">
+          <img src="assets/images/courses/learner-1.png" alt="Pair practice with cue cards"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Pair practice</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="assets/images/courses/learner-2.png" alt="Small group conversation circle"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Conversation circle</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="assets/images/courses/learner-3.png" alt="Listening exercise with headphones"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Listening practice</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="assets/images/courses/learner-4.png" alt="Role-play: job interview"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Role-play</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <h3 class="section-title">Frequently Asked Questions</h3>
+      <div class="faq">
+        <details class="faq-item" open>
+          <summary>How long is each lesson?</summary>
+          <p>Most lessons take 10–15 minutes and include listening practice and quick checks.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need to know any English?</summary>
+          <p>No — start at A1. Lessons use simple examples, translations, and slow audio.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Will this help with real life in Canada?</summary>
+          <p>Yes — topics cover transit, clinics, banking, housing, school, and workplace English.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do I track progress?</summary>
+          <p>See completed lessons, streaks, and badges. Review is spaced to help you remember.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-bar">
+      <div class="cta-text">
+        <h3>Start learning today</h3>
+        <p>Create a free account and finish your first lesson in minutes.</p>
+      </div>
+      <div class="cta-actions">
+        <a routerLink="/register" class="btn btn--primary">Create Account</a>
+        <a routerLink="/login" class="btn btn--ghost">I already have an account</a>
+      </div>
+    </section>
+
+    <!-- Scroll to top -->
+    <button class="scroll-top-btn" (click)="scrollToTop()" *ngIf="isVisible" aria-label="Scroll to top">⬆</button>
   </main>
 
+  <!-- Footer -->
   <footer class="site-footer">
     <p>&copy; 2025 SpeakMate. All rights reserved.</p>
   </footer>

@@ -28,8 +28,9 @@
   <!-- Hero -->
   <section class="about-hero">
     <div class="about-hero__text">
-      <h3 class="about-kicker">Built for newcomers</h3>
+      
       <h2 class="about-title">Learn practical English for real life in Canada</h2>
+      <h3 class="about-kicker">Built for newcomers</h3>
       <p class="about-lead">
         Short lessons, real dialogs, and friendly audio practice—so you can
         handle transit, clinics, jobs, and everyday conversations with confidence.
@@ -132,6 +133,15 @@
       <a routerLink="/resources" class="btn btn--ghost">Browse Resources</a>
     </div>
   </section>
+  <button
+  class="scroll-top-btn"
+  (click)="scrollToTop()"
+  *ngIf="isVisible"
+  aria-label="Scroll to top"
+>
+  ⬆
+</button>
+
 </main>
 
   <!-- ===== Footer (unchanged) ===== -->

@@ -317,3 +317,6 @@ body.dark-mode .faq-item {
 body.dark-mode .site-footer {
  background: #111;
 }
+.scroll-top-btn {
+  transition: opacity .2s ease, transform .2s ease;
+}
