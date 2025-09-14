@@ -1,9 +1,10 @@
 <div class="page-wrapper">
+  <!-- Header -->
   <header class="site-header">
     <div class="container">
       <div class="logo-nav">
         <a routerLink="/home" aria-label="Go to Home">
-          <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+          <img src="/assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
         </a>
         <h1 class="site-title">SpeakMate</h1>
       </div>
@@ -24,11 +25,335 @@
     </div>
   </header>
 
-  <main class="content-wrapper container" style="padding: 32px 0;">
-    <h2>Resources</h2>
-    <p>Resources content…</p>
+  <!-- Main -->
+  <main class="resources-page">
+    <!-- HERO (Spotlight) -->
+    <section class="resources-hero resources-hero--spotlight">
+      <div class="hero-text">
+        <h3 class="kicker">Your toolkit for real life</h3>
+        <h2 class="title">Resources you can print, play, and use today</h2>
+        <p class="lead">
+          Phrase sheets, audio shadowing, job templates, and trusted newcomer links — organized by level and topic.
+        </p>
+
+        <!-- Glass search bar -->
+        <div class="searchbar glass">
+          <input type="search" placeholder="Search resources (e.g., clinic dialogs, resume email, transit)…" />
+          <a routerLink="/register" class="btn btn--primary">Get Free Access</a>
+        </div>
+
+        <!-- Quick filters -->
+        <div class="tag-row">
+          <a href="#library" class="chip">PDF</a>
+          <a href="#library" class="chip">Audio</a>
+          <a href="#library" class="chip">Templates</a>
+          <a href="#library" class="chip">Vocabulary</a>
+          <a href="#library" class="chip">Grammar</a>
+          <a href="#library" class="chip">Listening</a>
+        </div>
+
+        <!-- Trust badges -->
+        <ul class="trust-row">
+          <li>✅ Print-friendly</li>
+          <li>✅ Offline audio</li>
+          <li>✅ CLB A1–B2</li>
+        </ul>
+      </div>
+
+      <!-- Right: soft spotlight image/card -->
+      <div class="hero-visual">
+        <div class="spotlight"></div>
+        <img
+          src="/assets/images/resources/hero-spotlight.png"
+          alt="Preview of printable sheets and audio player"
+          loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Featured Resources -->
+    <section class="section">
+      <h3 class="section-title">Featured Resources</h3>
+      <div class="grid grid--3">
+        <!-- Business Vocabulary in Use (PDF) -->
+        <article class="card track">
+          <img src="/assets/images/resources/feature-vocab-pack.png"
+               alt="Printable vocabulary sheets for business English"
+               class="card-img" loading="lazy" width="640" height="360" />
+          <div class="badge type-pdf">PDF · Vocabulary</div>
+          <h4 class="card-title">Business Vocabulary in Use</h4>
+          <p class="card-text">
+            Practical business vocabulary with examples you can use at work.
+          </p>
+          <ul class="meta">
+            <li>Printable PDF</li>
+            <li>Upper levels</li>
+            <li>Self-study friendly</li>
+          </ul>
+          <div class="actions">
+            <!-- PREVIEW (local PDF; TS will normalize to /assets/...) -->
+            <button class="btn btn--ghost" type="button"
+              (click)="openPdfPreview(
+                'Business Vocabulary in Use (Preview)',
+                'assets/images/resources/VOCABULARY%20-%20BUSINESS%20-Business-Vocabulary-in-Use.pdf'
+              )">Preview</button>
+
+            <!-- OPEN (absolute path) -->
+            <a class="btn btn--primary"
+               href="/assets/images/resources/VOCABULARY%20-%20BUSINESS%20-Business-Vocabulary-in-Use.pdf"
+               target="_blank" rel="noopener">Open</a>
+          </div>
+        </article>
+
+        <!-- Audio Sample (MP3) -->
+        <article class="card track">
+          <img src="/assets/images/resources/feature-pronunciation.png"
+               alt="Audio practice sample"
+               class="card-img" loading="lazy" width="640" height="360" />
+          <div class="badge type-audio">Audio · Listening</div>
+          <h4 class="card-title">Weather — Listening Sample</h4>
+          <p class="card-text">
+            Practice listening with a short weather report. Slow + natural playback.
+          </p>
+          <ul class="meta">
+            <li>MP3 sample</li>
+            <li>Beginner-friendly</li>
+            <li>Use with transcripts</li>
+          </ul>
+          <div class="actions">
+            <!-- PREVIEW (local MP3; TS logic ok) -->
+            <button class="btn btn--ghost" type="button"
+              (click)="openAudioPreview(
+                'Weather — Listening Sample (Preview)',
+                'assets/images/resources/weather%20%281%29.mp3'
+              )">Preview</button>
+
+            <!-- OPEN (absolute path) -->
+            <a class="btn btn--primary"
+               href="/assets/images/resources/weather%20%281%29.mp3"
+               target="_blank" rel="noopener">Open</a>
+          </div>
+        </article>
+
+        <!-- Hiring Toolkit (PDF) — your file -->
+        <article class="card track">
+          <img src="/assets/images/resources/feature-job-toolkit.png"
+               alt="Hiring toolkit with career development skills"
+               class="card-img" loading="lazy" width="640" height="360" />
+          <div class="badge type-pdf">PDF · Templates</div>
+          <h4 class="card-title">Hiring Toolkit (Career Development Skills)</h4>
+          <p class="card-text">
+            Templates and examples for resumes, emails, and interview preparation.
+          </p>
+          <ul class="meta">
+            <li>Printable PDF</li>
+            <li>Job search & workplace</li>
+            <li>Self-study friendly</li>
+          </ul>
+          <div class="actions">
+            <!-- PREVIEW (local PDF; TS will normalize) -->
+            <button class="btn btn--ghost" type="button"
+              (click)="openPdfPreview(
+                'Hiring Toolkit — Preview',
+                'assets/images/resources/career%20development%20skill.pdf'
+              )">Preview</button>
+
+            <!-- OPEN (absolute path) -->
+            <a class="btn btn--primary"
+               href="/assets/images/resources/career%20development%20skill.pdf"
+               target="_blank" rel="noopener">Open</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Resource Library -->
+    <section id="library" class="section">
+      <h3 class="section-title">Resource Library</h3>
+      <div class="filters">
+        <span class="chip">All</span>
+        <span class="chip">PDF</span>
+        <span class="chip">Audio</span>
+        <span class="chip">Templates</span>
+        <span class="chip">Links</span>
+        <span class="chip">Vocabulary</span>
+        <span class="chip">Grammar</span>
+        <span class="chip">Listening</span>
+      </div>
+
+      <div class="grid grid--4">
+        <!-- PDF -->
+        <article class="card">
+          <div class="badge type-pdf">PDF</div>
+          <h4 class="card-title">Business Vocabulary in Use</h4>
+          <p class="card-text">Printable reference with practice tasks for work contexts.</p>
+          <div class="row">
+            <span class="pill">PDF</span>
+            <span class="pill">Upper levels</span>
+          </div>
+          <div class="actions">
+            <a class="btn btn--line"
+               href="/assets/images/resources/VOCABULARY%20-%20BUSINESS%20-Business-Vocabulary-in-Use.pdf"
+               target="_blank" rel="noopener">Open</a>
+            <button class="btn btn--ghost" type="button"
+              (click)="openPdfPreview(
+                'Business Vocabulary in Use (Preview)',
+                'assets/images/resources/VOCABULARY%20-%20BUSINESS%20-Business-Vocabulary-in-Use.pdf'
+              )">Preview</button>
+          </div>
+        </article>
+
+        <!-- Audio -->
+        <article class="card">
+          <div class="badge type-audio">Audio</div>
+          <h4 class="card-title">Listening: Weather Sample</h4>
+          <p class="card-text">Short weather report for everyday listening practice.</p>
+          <div class="row">
+            <span class="pill">MP3</span>
+            <span class="pill">Beginner</span>
+          </div>
+          <div class="actions">
+            <a class="btn btn--line"
+               href="/assets/images/resources/weather%20%281%29.mp3"
+               target="_blank" rel="noopener">Open</a>
+            <button class="btn btn--ghost" type="button"
+              (click)="openAudioPreview(
+                'Weather — Listening Sample (Preview)',
+                'assets/images/resources/weather%20%281%29.mp3'
+              )">Preview</button>
+          </div>
+        </article>
+
+        <!-- Hiring Toolkit (Library card) -->
+        <article class="card">
+          <div class="badge type-pdf">PDF</div>
+          <h4 class="card-title">Hiring Toolkit (Career Development Skills)</h4>
+          <p class="card-text">Resume, email templates, and interview practice materials.</p>
+          <div class="row">
+            <span class="pill">PDF</span>
+            <span class="pill">Workplace</span>
+          </div>
+          <div class="actions">
+            <a class="btn btn--line"
+               href="/assets/images/resources/career%20development%20skill.pdf"
+               target="_blank" rel="noopener">Open</a>
+            <button class="btn btn--ghost" type="button"
+              (click)="openPdfPreview(
+                'Hiring Toolkit — Preview',
+                'assets/images/resources/career%20development%20skill.pdf'
+              )">Preview</button>
+          </div>
+        </article>
+
+        <!-- Trusted external link -->
+        <article class="card">
+          <div class="badge type-link">Link</div>
+          <h4 class="card-title">Newcomer Services (Canada)</h4>
+          <p class="card-text">Find local LINC/ESL, settlement help, and community programs.</p>
+          <div class="row">
+            <span class="pill">External</span>
+            <span class="pill">Trusted</span>
+          </div>
+          <div class="actions">
+            <a class="btn btn--line"
+               href="https://www.canada.ca/en/immigration-refugees-citizenship/services/new-immigrants.html"
+               target="_blank" rel="noopener">Open Site</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Study Gallery -->
+    <section class="section">
+      <h3 class="section-title">Study Aids in Action</h3>
+      <div class="photo-grid">
+        <figure class="photo">
+          <img src="/assets/images/resources/gallery-printables.png" alt="Learner using printable phrase sheets"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Printables</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="/assets/images/resources/gallery-shadowing.png" alt="Shadowing audio with transcript"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Audio shadowing</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="/assets/images/resources/gallery-templates.png" alt="Email template examples on a laptop"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Templates</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="/assets/images/resources/gallery-checklist.png" alt="Weekly study checklist"
+               loading="lazy" width="800" height="600" />
+          <figcaption>Study checklist</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <h3 class="section-title">Resources – FAQ</h3>
+      <div class="faq">
+        <details class="faq-item" open>
+          <summary>Can I print the PDFs?</summary>
+          <p>Yes. All PDFs are A4/Letter friendly with ink-light design.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is audio available offline?</summary>
+          <p>Download ZIP packs to play on your phone without internet.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What level should I choose?</summary>
+          <p>Start with A1/A2 if new to English; use B1/B2 for workplace topics.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need an account?</summary>
+          <p>You can preview, but downloading templates and audio requires a free account.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-bar">
+      <div class="cta-text">
+        <h3>Build a handy toolkit</h3>
+        <p>Create a free account to unlock all downloads and audio packs.</p>
+      </div>
+      <div class="cta-actions">
+        <a routerLink="/register" class="btn btn--primary">Create Account</a>
+        <a routerLink="/login" class="btn btn--ghost">I already have an account</a>
+      </div>
+    </section>
+
+    <!-- Preview Modal -->
+    <div class="preview-backdrop" *ngIf="previewOpen" (click)="closePreview()"></div>
+
+    <div class="preview-modal" *ngIf="previewOpen" role="dialog" aria-modal="true">
+      <div class="preview-header">
+        <h4>{{ previewTitle }}</h4>
+        <button class="close-btn" type="button" (click)="closePreview()" aria-label="Close">×</button>
+      </div>
+
+      <div class="preview-body">
+        <!-- PDF preview -->
+        <iframe *ngIf="previewType === 'pdf' && previewUrl"
+                [src]="previewUrl" width="100%" height="520" style="border:0;"></iframe>
+
+        <!-- Audio preview -->
+        <audio *ngIf="previewType === 'audio' && audioUrl"
+               [src]="audioUrl" controls style="width:100%;"></audio>
+
+        <!-- Fallback note -->
+        <p *ngIf="!previewUrl && !audioUrl">
+          Preview not available. Click <strong>Open</strong> to view on the source site.
+        </p>
+      </div>
+    </div>
+
+    <!-- Scroll to top -->
+    <button class="scroll-top-btn" (click)="scrollToTop()" *ngIf="isVisible" aria-label="Scroll to top">⬆</button>
   </main>
 
+  <!-- Footer -->
   <footer class="site-footer">
     <p>&copy; 2025 SpeakMate. All rights reserved.</p>
   </footer>
