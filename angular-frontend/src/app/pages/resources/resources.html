@@ -28,47 +28,36 @@
   <!-- Main -->
   <main class="resources-page">
     <!-- HERO (Spotlight) -->
-    <section class="resources-hero resources-hero--spotlight">
-      <div class="hero-text">
-        <h3 class="kicker">Your toolkit for real life</h3>
-        <h2 class="title">Resources you can print, play, and use today</h2>
-        <p class="lead">
-          Phrase sheets, audio shadowing, job templates, and trusted newcomer links — organized by level and topic.
-        </p>
+    <!-- Clean, compact hero -->
+<section class="res-hero">
+  <div class="res-hero__text">
+    <p class="res-hero__kicker">Your toolkit for real life</p>
+    <h2 class="res-hero__title">Downloadable English resources</h2>
+    <p class="res-hero__lead">Clear printables and short audio for life and work in Canada.</p>
 
-        <!-- Glass search bar -->
-        <div class="searchbar glass">
-          <input type="search" placeholder="Search resources (e.g., clinic dialogs, resume email, transit)…" />
-          <a routerLink="/register" class="btn btn--primary">Get Free Access</a>
-        </div>
+    <div class="res-hero__actions">
+      <a routerLink="/register" class="btn btn--primary">Get free access</a>
+      <a href="#library" class="btn btn--ghost">Browse library</a>
+    </div>
+  </div>
 
-        <!-- Quick filters -->
-        <div class="tag-row">
-          <a href="#library" class="chip">PDF</a>
-          <a href="#library" class="chip">Audio</a>
-          <a href="#library" class="chip">Templates</a>
-          <a href="#library" class="chip">Vocabulary</a>
-          <a href="#library" class="chip">Grammar</a>
-          <a href="#library" class="chip">Listening</a>
-        </div>
-
-        <!-- Trust badges -->
-        <ul class="trust-row">
-          <li>✅ Print-friendly</li>
-          <li>✅ Offline audio</li>
-          <li>✅ CLB A1–B2</li>
-        </ul>
-      </div>
-
-      <!-- Right: soft spotlight image/card -->
-      <div class="hero-visual">
-        <div class="spotlight"></div>
-        <img
-          src="/assets/images/resources/hero-spotlight.png"
-          alt="Preview of printable sheets and audio player"
-          loading="lazy" />
-      </div>
-    </section>
+  <aside class="res-hero__panel" aria-label="Resource stats">
+    <div class="res-hero__stat">
+      <span class="res-hero__stat-label">PDFs</span>
+      <span class="res-hero__stat-num">60+</span>
+    </div>
+    <div class="res-hero__divider"></div>
+    <div class="res-hero__stat">
+      <span class="res-hero__stat-label">Audio</span>
+      <span class="res-hero__stat-num">90+</span>
+    </div>
+    <div class="res-hero__divider"></div>
+    <div class="res-hero__stat">
+      <span class="res-hero__stat-label">Levels</span>
+      <span class="res-hero__stat-num">A1–B2</span>
+    </div>
+  </aside>
+</section>
 
     <!-- Featured Resources -->
     <section class="section">
