@@ -1,136 +1,117 @@
 <?php
-// backend/api/register.php
+// Creates a user and (for instructor/admin) validates a secret code.
+// Requires: backend/api/db.php to define $pdo (PDO connected to your DB)
 
-// ---- CORS / JSON headers (align with login.php) ----
-header("Access-Control-Allow-Origin: http://localhost:4200");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json; charset=utf-8");
-
-// Dev logging (remove in prod)
+header('Content-Type: application/json; charset=utf-8');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Preflight
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-  http_response_code(204);
-  exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-  http_response_code(405);
-  echo json_encode(['success' => false, 'error' => 'Method not allowed']);
-  exit;
-}
-
-// ---- Parse body: prefer JSON; fallback to form-encoded ----
-$raw = file_get_contents('php://input');
-$input = json_decode($raw, true);
-
-// If not JSON or empty, fallback to POST (e.g., from form submit)
-if (!is_array($input) || empty($input)) {
-  $input = $_POST;
-}
-
-$full_name = trim((string)($input['full_name'] ?? ''));
-$email     = strtolower(trim((string)($input['email'] ?? '')));
-$password  = (string)($input['password'] ?? '');
-
-// Basic validation
-if ($full_name === '' || $email === '' || $password === '') {
-  http_response_code(400);
-  echo json_encode(['success' => false, 'error' => 'Full name, email and password are required.']);
-  exit;
-}
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-  http_response_code(400);
-  echo json_encode(['success' => false, 'error' => 'Invalid email format.']);
-  exit;
-}
-if (strlen($password) < 8) { // adjust policy as you like
-  http_response_code(400);
-  echo json_encode(['success' => false, 'error' => 'Password must be at least 8 characters.']);
-  exit;
-}
-
-// Hash the password
-$hash = password_hash($password, PASSWORD_DEFAULT);
-
-require_once(__DIR__ . '/../config/database.php'); // must define $db (PDO)
-
 try {
-  // Throw exceptions on SQL errors
-  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-  // Case-insensitive duplicate check
-  $check = $db->prepare("SELECT id FROM users WHERE LOWER(email) = :email LIMIT 1");
-  $check->execute([':email' => $email]);
-  if ($check->fetch()) {
-    http_response_code(409);
-    echo json_encode(['success' => false, 'error' => 'Email already registered.']);
-    exit;
+  // --- DB ---
+  require __DIR__ . '/db.php';
+  if (!isset($pdo) || !$pdo) {
+    throw new Exception('DB not initialized');
   }
 
-  // Insert user (ensure password_hash column exists and is VARCHAR(255))
-  $ins = $db->prepare("
-    INSERT INTO users (full_name, email, password_hash)
-    VALUES (:full_name, :email, :hash)
-  ");
-  $ins->execute([
-    ':full_name' => $full_name,
-    ':email'     => $email,
-    ':hash'      => $hash,
-  ]);
+  // --- Input ---
+  $in = json_decode(file_get_contents('php://input'), true) ?: [];
+  $fullName = trim($in['fullName'] ?? '');
+  $email    = strtolower(trim($in['email'] ?? ''));
+  $password = (string)($in['password'] ?? '');
+  $role     = strtolower(trim($in['role'] ?? 'student'));
+  $secret   = trim((string)($in['secretCode'] ?? ''));
 
-  // Optionally send a welcome email (only if SMTP env vars are configured)
-  $smtpUser = getenv('SMTP_USER') ?: 'myclass.practice@gmail.com'; // change/remove defaults
-  $smtpPass = getenv('SMTP_PASS') ?: '';                           // store securely, not in source
-  $sentMail = false;
-  $mailError = null;
+  // --- Validate basics ---
+  if ($fullName === '' || $email === '' || $password === '') {
+    http_response_code(400);
+    echo json_encode(['error' => 'Missing required fields']); exit;
+  }
+  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid email']); exit;
+  }
+  if (!in_array($role, ['student','instructor','admin'], true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid role']); exit;
+  }
 
-  if ($smtpUser && $smtpPass) {
-    $autoload = __DIR__ . '/../vendor/autoload.php';
-    if (file_exists($autoload)) {
-      require $autoload;
-      try {
-        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $smtpUser;
-        $mail->Password   = $smtpPass;       // App Password recommended
-        $mail->SMTPSecure = 'tls';
-        $mail->Port       = 587;
+  // --- Secret required for instructor/admin ---
+  if ($role === 'instructor' || $role === 'admin') {   // <-- fixed: removed extra ')'
+    if ($secret === '') {
+      http_response_code(400);
+      echo json_encode(['error' => 'Secret code required']); exit;
+    }
 
-        $mail->setFrom($smtpUser, 'SpeakMate');
-        $mail->addAddress($email, $full_name);
+    // Verify secret against invite_codes
+    $stmt = $pdo->prepare(
+      "SELECT id, code_hash, uses_remaining
+         FROM invite_codes
+        WHERE role = ?
+          AND revoked_at IS NULL
+          AND (expires_at IS NULL OR expires_at > NOW())
+        ORDER BY id DESC
+        LIMIT 500"
+    );
+    $stmt->execute([$role]);
 
-        $mail->isHTML(true);
-        $mail->Subject = 'Welcome to SpeakMate!';
-        $mail->Body    = "<h3>Hello " . htmlspecialchars($full_name) . ",</h3>
-                          <p>Thanks for registering at <strong>SpeakMate</strong>.</p>
-                          <p>We’re excited to help you on your language journey.</p>
-                          <p>— SpeakMate Team</p>";
-        $mail->send();
-        $sentMail = true;
-      } catch (Throwable $e) {
-        $mailError = $e->getMessage();
-        // Don’t fail the registration if email fails
+    $matchId = null; $usesRemaining = null;
+    foreach ($stmt as $row) {
+      if (password_verify(strtoupper($secret), $row['code_hash'])) {
+        $matchId = (int)$row['id'];
+        $usesRemaining = $row['uses_remaining'];
+        break;
       }
+    }
+    if (!$matchId) {
+      http_response_code(401);
+      echo json_encode(['error' => 'Invalid secret']); exit;
+    }
+
+    // decrement if limited-use code
+    if ($usesRemaining !== null) {
+      $usesRemaining = (int)$usesRemaining;
+      if ($usesRemaining <= 0) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Secret exhausted']); exit;
+      }
+      $upd = $pdo->prepare("UPDATE invite_codes SET uses_remaining = uses_remaining - 1 WHERE id = ?");
+      $upd->execute([$matchId]);
     }
   }
 
-  http_response_code(201);
+  // --- Ensure users table exists (safe if already created) ---
+  $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(120) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('student','instructor','admin') NOT NULL DEFAULT 'student',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+  // --- Unique email check ---
+  $exists = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+  $exists->execute([$email]);
+  if ($exists->fetch()) {
+    http_response_code(409);
+    echo json_encode(['error' => 'Email already registered']); exit;
+  }
+
+  // --- Insert user ---
+  $hash = password_hash($password, PASSWORD_DEFAULT);
+  $ins  = $pdo->prepare("INSERT INTO users (full_name, email, password_hash, role) VALUES (?, ?, ?, ?)");
+  $ins->execute([$fullName, $email, $hash, $role]);
+  $userId = (int)$pdo->lastInsertId();
+
   echo json_encode([
-    'success' => true,
-    'message' => $sentMail ? 'User registered and email sent.' : 'User registered.',
-    'email_sent' => $sentMail,
-    'email_error' => $sentMail ? null : $mailError
+    'id'       => (string)$userId,
+    'fullName' => $fullName,
+    'email'    => $email,
+    'role'     => $role,
+    'token'    => null
   ]);
 } catch (Throwable $e) {
-  // Log details server-side; generic error to client
-  error_log('[register.php] ' . $e->getMessage());
   http_response_code(500);
-  echo json_encode(['success' => false, 'error' => 'Server error.']);
+  echo json_encode(['error' => $e->getMessage()]);
+  error_log('[register.php] ' . $e->getMessage());
 }

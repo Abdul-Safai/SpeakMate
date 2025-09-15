@@ -1,18 +1,21 @@
+// src/app/core/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 export type UserRole = 'student' | 'instructor' | 'admin';
+
 export interface AuthUser {
   id: string;
   fullName: string;
   email: string;
   role: UserRole;
-  token?: string; // e.g., JWT if your API returns one
+  token?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly API = '/api'; // proxied to PHP
   private readonly STORAGE_KEY = 'auth_user';
   private _user$ = new BehaviorSubject<AuthUser | null>(null);
 
@@ -35,9 +38,36 @@ export class AuthService {
     this._user$.next(user);
   }
 
-  // -------- API calls --------
+  // ---- Verify instructor/admin secret (server-side)
+  async verifySecret(role: UserRole, code: string): Promise<{ ok: boolean; error?: string }> {
+    return await firstValueFrom(
+      this.http.post<{ ok: boolean; error?: string }>(
+        `${this.API}/verify-secret.php`,
+        { role, code }
+      )
+    );
+  }
 
-  // Registers a user. Server validates instructor/admin secret.
+  // ---- Login (maps your PHP { success, user } shape) and persists the session
+  async login(body: { email: string; password: string }): Promise<void> {
+    try {
+      const res = await firstValueFrom(this.http.post<any>(`${this.API}/login.php`, body));
+      if (!res?.success || !res?.user) throw new Error(res?.error || 'Invalid response from server');
+      const u = res.user;
+      this.save({
+        id: String(u.id),
+        fullName: u.full_name ?? u.fullName ?? '',
+        email: u.email,
+        role: (u.role ?? 'student') as UserRole,
+        token: res?.token ?? u?.token ?? null,
+      });
+    } catch (e: any) {
+      const msg = e?.error?.error || e?.message || 'Login failed. Please try again.';
+      throw new Error(msg);
+    }
+  }
+
+  // ---- Register (does NOT log the user in; leaves them signed out)
   async register(body: {
     fullName: string;
     email: string;
@@ -45,19 +75,17 @@ export class AuthService {
     role: UserRole;
     secretCode?: string;
   }): Promise<void> {
-    await firstValueFrom(this.http.post('/api/register', body));
-    // If your API auto-logs in and returns a user, call this.save(user) here.
+    try {
+      const res = await firstValueFrom(this.http.post<any>(`${this.API}/register.php`, body));
+      if (res?.error) throw new Error(res.error);
+      // IMPORTANT: do NOT call this.save(...) here.
+      // Registration success leaves user logged out so UI can redirect to /login.
+      return;
+    } catch (e: any) {
+      const msg = e?.error?.error || e?.message || 'Registration failed.';
+      throw new Error(msg);
+    }
   }
 
-  // Logs in and stores the returned user
-  async login(body: { email: string; password: string }): Promise<void> {
-    const user = await firstValueFrom(
-      this.http.post<AuthUser>('/api/login', body)
-    );
-    this.save(user);
-  }
-
-  logout(): void {
-    this.save(null);
-  }
+  logout(): void { this.save(null); }
 }

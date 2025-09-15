@@ -32,12 +32,24 @@
         <h2>Welcome Back!</h2>
         <p class="login-sub">Log in to continue your learning journey.</p>
 
-        <form (ngSubmit)="loginUser()" #f="ngForm" novalidate>
+        <!-- Success banner after registration -->
+        <div *ngIf="banner" class="alert alert--success" role="status">
+          {{ banner }}
+          <button type="button" class="alert-close" (click)="banner = null" aria-label="Dismiss">✕</button>
+        </div>
+
+        <form (ngSubmit)="loginUser(f)" #f="ngForm" novalidate>
           <label for="email">Email</label>
-          <input id="email" type="email" name="email" [(ngModel)]="email" required placeholder="Enter your email" autocomplete="email" />
+          <input
+            id="email" type="email" name="email"
+            [(ngModel)]="email" required
+            placeholder="Enter your email" autocomplete="email" />
 
           <label for="password">Password</label>
-          <input id="password" type="password" name="password" [(ngModel)]="password" required placeholder="Enter your password" autocomplete="current-password" />
+          <input
+            id="password" type="password" name="password"
+            [(ngModel)]="password" required
+            placeholder="Enter your password" autocomplete="current-password" />
 
           <div class="forgot-password-link">
             <a routerLink="/forgot-password">Forgot password?</a>

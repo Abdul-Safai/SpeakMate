@@ -1,116 +1,143 @@
-import { Component } from '@angular/core';
+// src/app/pages/register/register.component.ts
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  Validators,
-  AbstractControl,
-  ValidationErrors,
-  FormGroup,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService, UserRole } from '../../core/auth.service';
 
 @Component({
-  selector: 'app-register',
   standalone: true,
+  selector: 'app-register',
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.css', '../home/home.css'], // keep header/footer consistent
+  styleUrls: ['./register.css', '../home/home.css'],
 })
-export class RegisterComponent {
-  submitting = false;
-  serverError = '';
-  form!: FormGroup;
+export class RegisterComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
-  // UI toggles
+  // visibility flags used in the HTML
   showPassword = false;
   showConfirm = false;
   showSecretText = false;
 
-  // Demo secrets. Replace with server-side validation in production.
-  private readonly SECRET_MAP: Record<'instructor' | 'admin', string> = {
-    instructor: 'INSTRUCTOR-123',
-    admin: 'ADMIN-123',
-  };
+  submitting = false;
+  serverError = '';
 
-  constructor(private fb: FormBuilder, private router: Router) {
-    // Initialize AFTER fb is injected
-    this.form = this.fb.group(
-      {
-        fullName: ['', [Validators.required, Validators.minLength(2)]],
-        email: ['', [Validators.required, Validators.email]],
-        role: ['student', [Validators.required]],
-        secretCode: [''], // validators applied conditionally
-        password: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', [Validators.required]],
-        agree: [false, [Validators.requiredTrue]],
+  form = this.fb.group(
+    {
+      fullName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      role: ['student' as UserRole, [Validators.required]],
+      secretCode: [''], // conditionally required for instructor/admin
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+      agree: [false, [Validators.requiredTrue]],
+    },
+    {
+      validators: (group) => {
+        const p = group.get('password')?.value || '';
+        const c = group.get('confirmPassword')?.value || '';
+        return p && c && p !== c ? { passwordMismatch: true } : null;
       },
-      { validators: this.passwordMatchValidator }
-    );
+    }
+  );
 
-    // Toggle secretCode required based on role
-    this.form.get('role')!.valueChanges.subscribe(() => {
-      const secret = this.form.get('secretCode')!;
-      if (this.showSecret) {
-        secret.setValidators([Validators.required]);
+  ngOnInit(): void {
+    // Ensure user is logged OUT while registering
+    if (this.auth.isLoggedIn) {
+      this.auth.logout();
+    }
+
+    // Make secretCode required only for instructor/admin
+    const roleCtrl = this.form.get('role')!;
+    const secretCtrl = this.form.get('secretCode')!;
+    roleCtrl.valueChanges.subscribe((role) => {
+      if (role === 'instructor' || role === 'admin') {
+        secretCtrl.addValidators([Validators.required]);
       } else {
-        secret.clearValidators();
-        secret.setValue('');
-        secret.setErrors(null);
+        secretCtrl.clearValidators();
+        secretCtrl.setErrors(null);
       }
-      secret.updateValueAndValidity({ emitEvent: false });
+      secretCtrl.updateValueAndValidity({ emitEvent: false });
     });
   }
 
-  get showSecret(): boolean {
+  // used by *ngIf in template
+  get showSecret() {
     const role = this.form.get('role')?.value;
     return role === 'instructor' || role === 'admin';
   }
 
-  fieldInvalid(name: string): boolean {
+  // used by [class.invalid]/[class.valid] bindings
+  fieldInvalid(name: string) {
     const c = this.form.get(name);
-    return !!c && c.invalid && (c.touched || c.dirty);
+    return !!c && c.invalid && (c.dirty || c.touched);
   }
-
-  fieldValid(name: string): boolean {
+  fieldValid(name: string) {
     const c = this.form.get(name);
-    return !!c && c.valid && (c.touched || c.dirty);
+    return !!c && c.valid && (c.dirty || c.touched);
   }
 
-  private passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
-    const pass = group.get('password')?.value;
-    const confirm = group.get('confirmPassword')?.value;
-    return pass && confirm && pass !== confirm ? { passwordMismatch: true } : null;
+  // used by (click) on the show/hide buttons
+  toggle(which: 'password' | 'confirm' | 'secret') {
+    if (which === 'password') this.showPassword = !this.showPassword;
+    if (which === 'confirm')  this.showConfirm  = !this.showConfirm;
+    if (which === 'secret')   this.showSecretText = !this.showSecretText;
   }
 
-  private validateSecret(): boolean {
-    if (!this.showSecret) return true;
-    const role = this.form.get('role')!.value as 'instructor' | 'admin';
-    const input = (this.form.get('secretCode')!.value || '').trim();
-    const ok = input && input === this.SECRET_MAP[role];
-    if (!ok) {
-      this.form.get('secretCode')!.setErrors({
-        ...(this.form.get('secretCode')!.errors || {}),
-        invalidSecret: true,
-      });
-    }
-    return ok;
-    }
-
-  async onSubmit(): Promise<void> {
+  async onSubmit() {
     this.serverError = '';
-    this.form.markAllAsTouched();
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
-    if (!this.validateSecret()) return;
+    const role = this.form.get('role')!.value as UserRole;
+    const fullName = this.form.get('fullName')!.value!.toString().trim();
+    const email = this.form.get('email')!.value!.toString().trim();
+    const password = this.form.get('password')!.value!.toString();
+    const secretCtrl = this.form.get('secretCode')!;
+    const rawSecret = (secretCtrl.value || '') as string;
 
     try {
       this.submitting = true;
-      // TODO: call your real register API here with this.form.value
-      await new Promise((r) => setTimeout(r, 400)); // demo delay
-      this.router.navigate(['/login']);
+
+      // 1) Verify secret only for instructor/admin
+      if (this.showSecret) {
+        const code = rawSecret.trim().toUpperCase();
+        if (!code) {
+          secretCtrl.setErrors({ required: true });
+          return;
+        }
+        const res = await this.auth.verifySecret(role, code);
+        if (!res.ok) {
+          secretCtrl.setErrors({ invalidSecret: true });
+          this.serverError = res.error || 'Incorrect secret code.';
+          return;
+        }
+        // Clear any previous error on success
+        secretCtrl.setErrors(null);
+        secretCtrl.updateValueAndValidity({ emitEvent: false });
+      }
+
+      // 2) Register (AuthService.register does NOT auto-login)
+      await this.auth.register({
+        fullName,
+        email,
+        password,
+        role,
+        secretCode: this.showSecret ? rawSecret.trim().toUpperCase() : undefined,
+      });
+
+      // 3) Go to LOGIN and show a friendly banner
+      this.router.navigate(['/login'], {
+        queryParams: { registered: '1' },
+        state: { flash: 'Account created! Please log in.' }
+      });
     } catch (e: any) {
-      this.serverError = e?.error?.message || 'Registration failed. Please try again.';
+      this.serverError = e?.message || 'Registration failed.';
     } finally {
       this.submitting = false;
     }
