@@ -26,61 +26,180 @@
 
   <!-- Main -->
   <main class="register-page">
-    <section class="register-card">
-      <h2>Create your account</h2>
-      <p class="sub">Choose a role. Instructors and admins enter a secret code.</p>
+    <section class="register-card glass">
+      <div class="card-header">
+        <h2>Create your account</h2>
+        <p class="sub">Create your account and pick your role.</p>
+      </div>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="form-grid">
-        <!-- Name -->
-        <label class="field">
-          <span>Full name</span>
-          <input type="text" formControlName="fullName" placeholder="Jane Doe" />
-          <small class="err" *ngIf="fieldInvalid('fullName')">Please enter your name (min 2 characters).</small>
-        </label>
 
-        <!-- Email -->
-        <label class="field">
-          <span>Email</span>
-          <input type="email" formControlName="email" placeholder="you@example.com" />
-          <small class="err" *ngIf="fieldInvalid('email')">Enter a valid email address.</small>
-        </label>
+        <!-- Segmented role selector (replaces the select box) -->
+        <div class="group">
+          <h3 class="group-title">Role</h3>
+          <div class="segmented" role="tablist" aria-label="Select role">
+            <label class="seg" [class.active]="form.get('role')?.value==='student'">
+              <input type="radio" formControlName="role" value="student" />
+              <span>Student</span>
+            </label>
+            <label class="seg" [class.active]="form.get('role')?.value==='instructor'">
+              <input type="radio" formControlName="role" value="instructor" />
+              <span>Instructor</span>
+            </label>
+            <label class="seg" [class.active]="form.get('role')?.value==='admin'">
+              <input type="radio" formControlName="role" value="admin" />
+              <span>Admin</span>
+            </label>
+          </div>
+          <small class="hint" *ngIf="showSecret">Secret code required for Instructor/Admin.</small>
+        </div>
 
-        <!-- Role -->
-        <label class="field">
-          <span>User type</span>
-          <select formControlName="role" aria-label="User type">
-            <option value="student">Student</option>
-            <option value="instructor">Instructor</option>
-            <option value="admin">Admin</option>
-          </select>
-          <small class="hint">Admin/Instructor: you’ll need a secret code.</small>
-        </label>
+        <!-- Identity -->
+        <div class="group">
+          <h3 class="group-title">Your info</h3>
+          <div class="grid-2">
+            <!-- Full name -->
+            <div class="field" [class.invalid]="fieldInvalid('fullName')" [class.valid]="fieldValid('fullName')">
+              <div class="float">
+                <input type="text" formControlName="fullName" placeholder=" " />
+                <label>Full name</label>
+              </div>
+              <small class="err" *ngIf="fieldInvalid('fullName')">Please enter your name (min 2 characters).</small>
+            </div>
+
+            <!-- Email -->
+            <div class="field" [class.invalid]="fieldInvalid('email')" [class.valid]="fieldValid('email')">
+              <div class="float">
+                <input type="email" formControlName="email" placeholder=" " autocomplete="email" />
+                <label>Email</label>
+              </div>
+              <small class="err" *ngIf="fieldInvalid('email')">Enter a valid email address.</small>
+            </div>
+          </div>
+        </div>
 
         <!-- Secret (conditional) -->
-        <label class="field" *ngIf="showSecret">
-          <span>Secret code</span>
-          <input type="password" formControlName="secretCode" placeholder="Enter secret code" />
-          <small class="err" *ngIf="fieldInvalid('secretCode')">Secret code is required.</small>
-          <small class="err" *ngIf="form.get('secretCode')?.hasError('invalidSecret')">
-            Incorrect secret code.
-          </small>
-        </label>
+        <div class="group" *ngIf="showSecret">
+          <h3 class="group-title">Access</h3>
+          <div class="field" [class.invalid]="fieldInvalid('secretCode')" [class.valid]="fieldValid('secretCode')">
+            <div class="float input-wrap">
+              <input
+                [type]="showSecretText ? 'text' : 'password'"
+                formControlName="secretCode"
+                placeholder=" "
+                aria-describedby="secretHelp"
+              />
+              <label>Secret code</label>
 
-        <!-- Password -->
-        <label class="field">
-          <span>Password</span>
-          <input type="password" formControlName="password" placeholder="Min 6 characters" />
-          <small class="err" *ngIf="fieldInvalid('password')">Password must be at least 6 characters.</small>
-        </label>
+              <!-- Curved-eye toggle -->
+              <button
+                type="button"
+                class="toggle-btn"
+                (click)="showSecretText = !showSecretText"
+                [attr.aria-pressed]="showSecretText"
+                [attr.aria-label]="showSecretText ? 'Hide secret code' : 'Show secret code'">
+                <!-- eye-open -->
+                <svg *ngIf="!showSecretText" class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/>
+                    <circle cx="12" cy="12" r="3.5"/>
+                  </g>
+                </svg>
+                <!-- eye-closed -->
+                <svg *ngIf="showSecretText" class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12c3 3 15 3 18 0"/>
+                    <path d="M7 11.5c-.5.5-1 .9-1.5 1.3"/>
+                    <path d="M12 11v2"/>
+                    <path d="M17 11.5c.5.5 1 .9 1.5 1.3"/>
+                  </g>
+                </svg>
+              </button>
+            </div>
 
-        <!-- Confirm -->
-        <label class="field">
-          <span>Confirm password</span>
-          <input type="password" formControlName="confirmPassword" placeholder="Re-enter password" />
-          <small class="err" *ngIf="form.hasError('passwordMismatch') && (form.touched || form.dirty)">
-            Passwords don’t match.
-          </small>
-        </label>
+            <small id="secretHelp" class="hint">Provided by your program admin.</small>
+            <small class="err" *ngIf="fieldInvalid('secretCode')">Secret code is required.</small>
+            <small class="err" *ngIf="form.get('secretCode')?.hasError('invalidSecret')">Incorrect secret code.</small>
+          </div>
+        </div>
+
+        <!-- Security -->
+        <div class="group">
+          <h3 class="group-title">Security</h3>
+          <div class="grid-2">
+            <!-- Password -->
+            <div class="field" [class.invalid]="fieldInvalid('password') || form.hasError('passwordMismatch')" [class.valid]="fieldValid('password') && !form.hasError('passwordMismatch')">
+              <div class="float input-wrap">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder=" "
+                  autocomplete="new-password"
+                />
+                <label>Password (min 6)</label>
+
+                <button
+                  type="button"
+                  class="toggle-btn"
+                  (click)="showPassword = !showPassword"
+                  [attr.aria-pressed]="showPassword"
+                  [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                  <svg *ngIf="!showPassword" class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/>
+                      <circle cx="12" cy="12" r="3.5"/>
+                    </g>
+                  </svg>
+                  <svg *ngIf="showPassword" class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12c3 3 15 3 18 0"/>
+                      <path d="M7 11.5c-.5.5-1 .9-1.5 1.3"/>
+                      <path d="M12 11v2"/>
+                      <path d="M17 11.5c.5.5 1 .9 1.5 1.3"/>
+                    </g>
+                  </svg>
+                </button>
+              </div>
+              <small class="err" *ngIf="fieldInvalid('password')">Password must be at least 6 characters.</small>
+            </div>
+
+            <!-- Confirm -->
+            <div class="field" [class.invalid]="form.hasError('passwordMismatch') && (form.touched || form.dirty)" [class.valid]="fieldValid('confirmPassword') && !form.hasError('passwordMismatch')">
+              <div class="float input-wrap">
+                <input
+                  [type]="showConfirm ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  placeholder=" "
+                  autocomplete="new-password"
+                />
+                <label>Confirm password</label>
+
+                <button
+                  type="button"
+                  class="toggle-btn"
+                  (click)="showConfirm = !showConfirm"
+                  [attr.aria-pressed]="showConfirm"
+                  [attr.aria-label]="showConfirm ? 'Hide password' : 'Show password'">
+                  <svg *ngIf="!showConfirm" class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/>
+                      <circle cx="12" cy="12" r="3.5"/>
+                    </g>
+                  </svg>
+                  <svg *ngIf="showConfirm" class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12c3 3 15 3 18 0"/>
+                      <path d="M7 11.5c-.5.5-1 .9-1.5 1.3"/>
+                      <path d="M12 11v2"/>
+                      <path d="M17 11.5c.5.5 1 .9 1.5 1.3"/>
+                    </g>
+                  </svg>
+                </button>
+              </div>
+              <small class="err" *ngIf="form.hasError('passwordMismatch') && (form.touched || form.dirty)">Passwords don’t match.</small>
+            </div>
+          </div>
+        </div>
 
         <!-- Terms -->
         <label class="checkbox">
