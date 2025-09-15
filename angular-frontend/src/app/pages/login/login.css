@@ -1,138 +1,211 @@
-/* Page layout */
+/* =========================
+   PAGE LAYOUT (yours)
+   ========================= */
 .page-wrapper {
- display: flex;
- flex-direction: column;
- min-height: 100vh;
- margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+.content-wrapper { flex: 1; }
+
+/* =========================
+   HEADER — match Register page
+   (append to the end of login.css)
+   ========================= */
+
+/* Layout */
+.site-header {
+  background: #00703c;               /* same brand green as your footer */
+  border-bottom: 0;                  /* remove thin grey line if any */
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;       /* keep everything starting from the left */
+  gap: 28px;                         /* a bit more breathing room */
+  min-height: 68px;
 }
 
-.content-wrapper {
- flex: 1;
+/* Left group: logo + title */
+.logo-nav { display: flex; align-items: center; gap: 10px; }
+.logo { height: 40px; width: auto; display: block; }
+.site-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;                    /* white title */
 }
 
-/* Footer */
+/* Center: nav */
+.main-nav ul {
+  display: flex;
+  gap: 22px;                         /* more space between links */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.main-nav a {
+  color: #ffffff;                    /* white links */
+  text-decoration: none;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: background .2s ease, box-shadow .25s ease, opacity .2s ease;
+}
+.main-nav a:hover,
+.main-nav a.active {
+  background: rgba(255,255,255,.12); /* soft white hover like register */
+  box-shadow: 0 6px 16px rgba(0,0,0,.10);
+}
+
+/* Right: Register button */
+.auth-buttons {
+  margin-left: auto;                 /* pushes the button all the way right */
+  display: flex;
+  gap: 10px;
+}
+.nav-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.14);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform .15s ease, box-shadow .25s ease, background .2s ease, opacity .2s ease;
+}
+.nav-btn:hover {
+  transform: translateY(-2px);
+  opacity: .98;
+  background: rgba(255,255,255,.22);
+  box-shadow: 0 10px 24px rgba(0,0,0,.15);
+}
+
+/* Mobile tweaks (keep header tidy like register) */
+@media (max-width: 900px) {
+  .site-title { display: none; }     /* hide text on narrow screens */
+}
+@media (max-width: 720px) {
+  .site-header .container { flex-wrap: wrap; row-gap: 8px; }
+  .main-nav { order: 3; width: 100%; }
+  .main-nav ul { justify-content: center; flex-wrap: wrap; gap: 12px; }
+}
+
+/* Responsive tweaks */
+@media (max-width:900px){ .site-title{ display:none; } }
+@media (max-width:720px){
+  .site-header .container{ flex-wrap:wrap; row-gap:8px; }
+  .main-nav{ order:3; width:100%; }
+  .main-nav ul{ justify-content:center; flex-wrap:wrap; gap:10px; }
+}
+
+/* =========================
+   FOOTER (yours)
+   ========================= */
 .site-footer {
- background-color: #00703c;
- color: white;
- text-align: center;
- padding: 15px 0;
- font-size: 1rem;
+  background-color: #00703c;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 1rem;
 }
 
-/* Main container */
+/* =========================
+   MAIN / CARD (yours)
+   ========================= */
 .login-main {
- flex: 1;
- display: flex;
- justify-content: center;
- align-items: center;
- background: linear-gradient(to right, #e0f2f1, #ffffff);
- padding: 40px 20px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #e0f2f1, #ffffff);
+  padding: 40px 20px;
 }
-
-/* Login box */
 .login-box {
- background: #fff;
- padding: 60px 40px;
- border-radius: 16px;
- box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
- width: 100%;
- max-width: 500px;
- min-height: 550px;
- text-align: center;
+  background: #fff;
+  padding: 60px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  min-height: 550px;
+  text-align: center;
 }
-
-/* Heading */
 .login-box h2 {
- font-size: 2.6rem;
- margin-bottom: 16px;
- color: #00703c;
+  font-size: 2.6rem;
+  margin-bottom: 16px;
+  color: #00703c;
 }
-
-/* Subtext */
 .login-sub {
- font-size: 1.2rem;
- color: #666;
- margin-bottom: 30px;
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 30px;
 }
 
-/* Form labels and inputs */
+/* Fields */
 .login-box label {
- display: block;
- text-align: left;
- font-size: 1.1rem;
- margin-bottom: 8px;
- color: #333;
- font-weight: 500;
+  display: block;
+  text-align: left;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
 }
-
 .login-box input {
- width: 100%;
- padding: 14px 16px;
- margin-bottom: 24px;
- border: 1px solid #ccc;
- border-radius: 6px;
- font-size: 1.1rem;
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1.1rem;
+}
+.login-box input:focus{
+  outline:none;
+  border-color:#00703c;
+  box-shadow:0 0 0 3px rgba(0,112,60,.12);
 }
 
 /* Button */
 .login-btn {
- width: 100%;
- padding: 14px;
- background-color: #00703c;
- color: #fff;
- font-size: 1.2rem;
- font-weight: bold;
- border: none;
- border-radius: 6px;
- cursor: pointer;
- transition: background-color 0.3s ease;
+  width: 100%;
+  padding: 14px;
+  background-color: #00703c;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
-
-.login-btn:hover {
- background-color: #005e2e;
-}
+.login-btn:hover { background-color: #005e2e; }
 
 /* Forgot password */
 .forgot-password-link {
- text-align: right;
- margin: 5px 0 20px;
+  text-align: right;
+  margin: 5px 0 20px;
 }
-
 .forgot-password-link a {
- font-size: 1rem;
- color: #00703c;
- text-decoration: none;
- font-weight: 500;
+  font-size: 1rem;
+  color: #00703c;
+  text-decoration: none;
+  font-weight: 500;
 }
-
-.forgot-password-link a:hover {
- text-decoration: underline;
-}
+.forgot-password-link a:hover { text-decoration: underline; }
 
 /* Error message */
 .login-message {
- color: red;
- margin-top: 12px;
- font-weight: bold;
- font-size: 1.5rem;
+  color: red;
+  margin-top: 12px;
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 
-/* Responsive layout */
+/* Responsive */
 @media (max-width: 640px) {
- .login-box {
-   padding: 40px 20px;
-   min-height: 500px;
- }
-
- .login-box h2 {
-   font-size: 2.2rem;
- }
-
- .login-sub {
-   font-size: 1.5rem;
- }
-
- .login-btn {
-   font-size: 1.1rem;
- }
+  .login-box { padding: 40px 20px; min-height: 500px; }
+  .login-box h2 { font-size: 2.2rem; }
+  .login-sub { font-size: 1.1rem; }
 }

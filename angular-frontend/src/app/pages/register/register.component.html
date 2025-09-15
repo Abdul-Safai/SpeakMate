@@ -4,10 +4,11 @@
     <div class="container">
       <div class="logo-nav">
         <a routerLink="/home" aria-label="Go to Home">
-          <img src="assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
+          <img src="/assets/images/logo2.png" alt="SpeakMate Logo" class="logo" />
         </a>
         <h1 class="site-title">SpeakMate</h1>
       </div>
+
       <nav class="main-nav">
         <ul>
           <li><a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a></li>
@@ -16,41 +17,90 @@
           <li><a routerLink="/resources" routerLinkActive="active">Resources</a></li>
         </ul>
       </nav>
+
       <div class="auth-buttons">
-        <a class="nav-btn" routerLink="/login">Login</a>
+        <a routerLink="/login" class="nav-btn">Login</a>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Wrapper -->
-  <div class="content-wrapper">
-    <!-- Main Register Section -->
-    <main class="register-main">
-      <div class="register-box">
-        <h2>Create Your Account</h2>
-        <p class="register-sub">Join SpeakMate and start your language journey today.</p>
+  <!-- Main -->
+  <main class="register-page">
+    <section class="register-card">
+      <h2>Create your account</h2>
+      <p class="sub">Choose a role. Instructors and admins enter a secret code.</p>
 
-        <form (ngSubmit)="registerUser()" #registerForm="ngForm" novalidate>
-          <label for="fullName">Full Name</label>
-          <input id="fullName" type="text" [(ngModel)]="fullName" name="fullName" required placeholder="Enter your full name" />
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="form-grid">
+        <!-- Name -->
+        <label class="field">
+          <span>Full name</span>
+          <input type="text" formControlName="fullName" placeholder="Jane Doe" />
+          <small class="err" *ngIf="fieldInvalid('fullName')">Please enter your name (min 2 characters).</small>
+        </label>
 
-          <label for="email">Email</label>
-          <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder="Enter your email" />
+        <!-- Email -->
+        <label class="field">
+          <span>Email</span>
+          <input type="email" formControlName="email" placeholder="you@example.com" />
+          <small class="err" *ngIf="fieldInvalid('email')">Enter a valid email address.</small>
+        </label>
 
-          <label for="password">Password</label>
-          <input id="password" type="password" [(ngModel)]="password" name="password" required placeholder="Create a password" />
+        <!-- Role -->
+        <label class="field">
+          <span>User type</span>
+          <select formControlName="role" aria-label="User type">
+            <option value="student">Student</option>
+            <option value="instructor">Instructor</option>
+            <option value="admin">Admin</option>
+          </select>
+          <small class="hint">Admin/Instructor: you’ll need a secret code.</small>
+        </label>
 
-          <button type="submit" class="register-btn" [disabled]="loading || !registerForm.valid">
-            {{ loading ? 'Registering…' : 'Register' }}
+        <!-- Secret (conditional) -->
+        <label class="field" *ngIf="showSecret">
+          <span>Secret code</span>
+          <input type="password" formControlName="secretCode" placeholder="Enter secret code" />
+          <small class="err" *ngIf="fieldInvalid('secretCode')">Secret code is required.</small>
+          <small class="err" *ngIf="form.get('secretCode')?.hasError('invalidSecret')">
+            Incorrect secret code.
+          </small>
+        </label>
+
+        <!-- Password -->
+        <label class="field">
+          <span>Password</span>
+          <input type="password" formControlName="password" placeholder="Min 6 characters" />
+          <small class="err" *ngIf="fieldInvalid('password')">Password must be at least 6 characters.</small>
+        </label>
+
+        <!-- Confirm -->
+        <label class="field">
+          <span>Confirm password</span>
+          <input type="password" formControlName="confirmPassword" placeholder="Re-enter password" />
+          <small class="err" *ngIf="form.hasError('passwordMismatch') && (form.touched || form.dirty)">
+            Passwords don’t match.
+          </small>
+        </label>
+
+        <!-- Terms -->
+        <label class="checkbox">
+          <input type="checkbox" formControlName="agree" />
+          <span>I agree to the Terms & Privacy</span>
+        </label>
+
+        <!-- Server error -->
+        <div class="server-error" *ngIf="serverError">{{ serverError }}</div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button class="btn btn--primary" type="submit" [disabled]="submitting">
+            {{ submitting ? 'Creating…' : 'Create account' }}
           </button>
-
-          <p *ngIf="message" [ngClass]="{ 'success': messageType === 'success', 'error': messageType === 'error' }" class="register-message">
-            {{ message }}
-          </p>
-        </form>
-      </div>
-    </main>
-  </div>
+          <a routerLink="/login" class="btn btn--ghost">I already have an account</a>
+        </div>
+      </form>
+    </section>
+  </main>
 
   <!-- Footer -->
   <footer class="site-footer">

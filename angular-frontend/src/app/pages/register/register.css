@@ -1,206 +1,31 @@
-/* Global font */
-body {
- font-family: 'Playfair Display', serif;
- margin: 0;
+.register-page{
+  --border:#e5e7eb; --muted:#6b7280; --ink:#0b1324;
+  --radius:14px; --shadow:0 12px 28px rgba(0,0,0,.08);
+  max-width: 760px; margin: 24px auto 40px; padding: 0 16px; color: var(--ink);
 }
 
-/* Page layout */
-.page-wrapper {
- display: flex;
- flex-direction: column;
- min-height: 100vh;
+.register-card{
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: linear-gradient(180deg,#fff,#fafafa); box-shadow: var(--shadow);
+  padding: 22px 18px;
+}
+.register-card > h2{ margin: 0; font-size: clamp(22px, 3vw, 28px) }
+.register-card > .sub{ color: var(--muted); margin: 6px 0 14px }
+
+.form-grid{ display: grid; gap: 12px }
+.field{ display: grid; gap: 6px }
+.field > span{ font-weight: 800; font-size: 13px }
+.field input, .field select{
+  height: 44px; padding: 0 12px; border: 1px solid var(--border);
+  border-radius: 12px; background: #fff; outline: none;
+}
+.field input:focus, .field select:focus{
+  border-color: rgba(37,99,235,.45);
+  box-shadow: 0 8px 24px rgba(37,99,235,.12);
 }
 
-.content-wrapper {
- flex: 1;
-}
-
-/* Header */
-.site-header {
- background-color: #00703c;
- padding: 20px 0;
- color: #fff;
-}
-
-.container {
- display: flex;
- justify-content: space-between;
- align-items: center;
- width: 90%;
- margin: 0 auto;
-}
-
-.logo-nav {
- display: flex;
- align-items: center;
-}
-
-.logo {
- height: 48px;
- margin-right: 12px;
-}
-
-.site-title {
- font-size: 2rem;
- font-weight: bold;
- color: white;
-}
-
-.main-nav ul {
- list-style: none;
- display: flex;
- gap: 75px;
- margin: 0;
- padding: 0;
-}
-
-.main-nav a {
- color: white;
- text-decoration: none;
- font-weight: 600;
- font-size: 1.3rem;
-}
-
-.main-nav a:hover {
- text-decoration: underline;
-}
-
-.auth-buttons .nav-btn {
- background: white;
- color: #00703c;
- padding: 8px 16px;
- border-radius: 6px;
- font-weight: bold;
- text-decoration: none;
- font-size: 1rem;
- transition: background-color 0.3s ease;
-}
-
-.auth-buttons .nav-btn:hover {
- background: #f2f2f2;
-}
-
-/* Footer */
-.site-footer {
- background-color: #2e2e2e;
- color: white;
- text-align: center;
- padding: 15px 0;
- font-size: 1rem;
-}
-
-/* Main container */
-.register-main {
- flex: 1;
- display: flex;
- justify-content: center;
- align-items: center;
- background: linear-gradient(to right, #e0f2f1, #ffffff);
- padding: 40px 20px;
-}
-
-/* Register box */
-.register-box {
- background: #fff;
- padding: 60px 40px;
- border-radius: 16px;
- box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
- width: 100%;
- max-width: 500px;
- min-height: 580px;
- text-align: center;
-}
-
-/* Heading */
-.register-box h2 {
- font-size: 2.6rem;
- margin-bottom: 16px;
- color: #00703c;
-}
-
-/* Subtext */
-.register-sub {
- font-size: 1.2rem;
- color: #666;
- margin-bottom: 30px;
-}
-
-/* Form labels and inputs */
-.register-box label {
- display: block;
- text-align: left;
- font-size: 1.1rem;
- margin-bottom: 8px;
- color: #333;
- font-weight: 500;
-}
-
-.register-box input {
- width: 100%;
- padding: 14px 16px;
- margin-bottom: 24px;
- border: 1px solid #ccc;
- border-radius: 6px;
- font-size: 1.1rem;
-}
-
-/* Button */
-.register-btn {
- width: 100%;
- padding: 14px;
- background-color: #00703c;
- color: #fff;
- font-size: 1.2rem;
- font-weight: bold;
- border: none;
- border-radius: 6px;
- cursor: pointer;
- transition: background-color 0.3s ease;
-}
-
-.register-btn:hover {
- background-color: #005e2e;
-}
-
-/* Message */
-.register-message {
- color: red;
- margin-top: 12px;
- font-weight: bold;
- font-size: 1.5rem;
-}
-
-/* Responsive layout */
-@media (max-width: 640px) {
- .register-box {
-   padding: 40px 20px;
-   min-height: 500px;
- }
-
- .register-box h2 {
-   font-size: 2.2rem;
- }
-
- .register-sub {
-   font-size: 1.5rem;
- }
-
- .register-btn {
-   font-size: 1.1rem;
- }
-}
-.register-message {
-  margin-top: 15px;
-  font-size: 16px;
-  text-align: center;
-}
-
-.register-message.success {
-  color: #28a745; /* Green */
-  font-weight: bold;
-}
-
-.register-message.error {
-  color: #dc3545; /* Red */
-  font-weight: bold;
-}
+.checkbox{ display:flex; gap:10px; align-items:center; margin-top:6px; color:var(--muted) }
+.err{ color:#b91c1c; font-size:12px }
+.hint{ color:var(--muted); font-size:12px }
+.actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px }
+.server-error{ color:#b91c1c; font-weight:700 }

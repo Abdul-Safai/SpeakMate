@@ -1,5 +1,6 @@
 <section class="dashboard">
- <h1>Welcome, {{ userName }}!</h1>
+ <h1>Welcome, {{ user?.fullName || 'Guest' }}!</h1>
+
  <p>This is your dashboard.</p>
 
  <div class="actions">

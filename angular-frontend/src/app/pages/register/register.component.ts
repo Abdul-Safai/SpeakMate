@@ -1,67 +1,95 @@
-// src/app/pages/register/register.component.ts
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+  FormGroup,
+} from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
+import type { UserRole } from '../../core/auth.service';
+
+const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+  const p = group.get('password')?.value;
+  const c = group.get('confirmPassword')?.value;
+  return p && c && p !== c ? { passwordMismatch: true } : null;
+};
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  // router directives are used in the template header
-  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.css']
+  styleUrls: ['./register.css', '../home/home.css'],
 })
-export class RegisterComponent {
-  fullName = '';
-  email = '';
-  password = '';
-  message = '';
-  messageType: 'success' | 'error' = 'success';
-  loading = false;
+export class RegisterComponent implements OnInit {
+  form!: FormGroup;
+  submitting = false;
+  serverError = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
-
-  registerUser() {
-    if (this.loading) return;
-    this.message = '';
-    this.messageType = 'success';
-
-    const payload = {
-      full_name: this.fullName.trim(),
-      email: this.email.trim().toLowerCase(),
-      password: this.password.trim(),
-    };
-
-    if (!payload.full_name || !payload.email || !payload.password) {
-      this.messageType = 'error';
-      this.message = 'Please fill in all fields.';
-      return;
-    }
-
-    this.loading = true;
-
-    this.http.post<any>('http://localhost/SpeakMate/backend/api/register.php', payload)
-      .subscribe({
-        next: (response) => {
-          this.loading = false;
-          this.messageType = 'success';
-          this.message = response?.message || 'Registration successful! Redirecting to login…';
-          this.resetForm();
-          setTimeout(() => this.router.navigate(['/login']), 1500);
-        },
-        error: (error) => {
-          this.loading = false;
-          this.messageType = 'error';
-          this.message = error?.error?.error || 'Error connecting to server.';
-        }
-      });
+  constructor(private fb: FormBuilder, private router: Router, private auth: AuthService) {
+    this.form = this.fb.group(
+      {
+        fullName: ['', [Validators.required, Validators.minLength(2)]],
+        email: ['', [Validators.required, Validators.email]],
+        role: ['student' as UserRole, Validators.required],
+        secretCode: [''],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', Validators.required],
+        agree: [false, Validators.requiredTrue],
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 
-  private resetForm() {
-    this.fullName = '';
-    this.email = '';
-    this.password = '';
+  ngOnInit(): void {
+    this.form.get('role')!.valueChanges.subscribe((role) => {
+      const sc = this.form.get('secretCode')!;
+      if (role === 'student') { sc.clearValidators(); sc.setValue(''); }
+      else { sc.setValidators([Validators.required, Validators.minLength(4)]); }
+      sc.updateValueAndValidity();
+    });
+  }
+
+  get showSecret(): boolean {
+    const role = this.form.get('role')!.value as UserRole;
+    return role === 'instructor' || role === 'admin';
+  }
+
+  fieldInvalid(name: string): boolean {
+    const c = this.form.get(name);
+    return !!c && c.invalid && (c.dirty || c.touched);
+  }
+
+  async onSubmit(): Promise<void> {
+    this.serverError = '';
+    this.form.markAllAsTouched();
+    if (this.form.invalid) return;
+
+    const { fullName, email, password, role, secretCode } = this.form.value as {
+      fullName: string; email: string; password: string; role: UserRole; secretCode?: string;
+    };
+
+    this.submitting = true;
+    try {
+      await this.auth.register({ fullName, email, password, role, secretCode });
+      this.router.navigate(['/login']);
+    } catch (e: any) {
+      const status = e?.status;
+      const code = e?.error?.code;
+      if (status === 403 && code === 'INVALID_SECRET') {
+        this.form.get('secretCode')!.setErrors({ invalidSecret: true });
+      } else if (status === 409 && code === 'EMAIL_TAKEN') {
+        this.serverError = 'That email is already registered.';
+      } else {
+        this.serverError = e?.error?.message || 'Registration failed. Please try again.';
+      }
+    } finally {
+      this.submitting = false;
+    }
   }
 }

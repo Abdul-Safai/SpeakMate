@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth.guard';
+import { AuthGuard } from './core/auth.guard'; // ✅ import the class
 
 export const routes: Routes = [
   // Default landing
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 
-  // ✅ These map to the files you actually have
+  // Pages (keep paths matching your actual files)
   {
     path: 'home',
     loadComponent: () =>
@@ -21,15 +21,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/courses/courses.component').then(m => m.CoursesComponent),
   },
-
- 
-{
-  path: 'resources',
-  loadComponent: () =>
-    import('./pages/resources/resources').then(m => m.ResourcesComponent),
-},
-
-
+  {
+    path: 'resources',
+    loadComponent: () =>
+      import('./pages/resources/resources').then(m => m.ResourcesComponent),
+  },
   {
     path: 'login',
     loadComponent: () =>
@@ -46,9 +42,10 @@ export const routes: Routes = [
       import('./pages/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent),
   },
 
+  // Protected
   {
     path: 'dashboard',
-    canActivate: [authGuard],
+    canActivate: [AuthGuard], // ✅ use the class here
     loadComponent: () =>
       import('./pages/dashboard/dashboard').then(m => m.DashboardComponent),
   },

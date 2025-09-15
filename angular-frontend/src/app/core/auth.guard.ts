@@ -1,32 +1,23 @@
-import { inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
-  CanActivateFn,
-  CanMatchFn,
-  Router,
-  UrlTree,
-  UrlSegment,
+  CanActivate, Router, UrlTree, ActivatedRouteSnapshot, RouterStateSnapshot,
+  CanMatch, Route, UrlSegment
 } from '@angular/router';
 import { AuthService } from './auth.service';
 
-/** Protects routes (e.g., /dashboard). If not logged in, redirects to /login?returnUrl=... */
-export const authGuard: CanActivateFn = (_route, state): boolean | UrlTree => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
+@Injectable({ providedIn: 'root' })
+export class AuthGuard implements CanActivate, CanMatch {
+  constructor(private auth: AuthService, private router: Router) {}
 
-  if (auth.isLoggedIn()) return true;
+  private handleAuth(): boolean | UrlTree {
+    return this.auth.isLoggedIn ? true : this.router.createUrlTree(['/login']);
+  }
 
-  return router.createUrlTree(['/login'], {
-    queryParams: { returnUrl: state.url },
-  });
-};
+  canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): boolean | UrlTree {
+    return this.handleAuth();
+  }
 
-/** Optional: block loading of lazy routes too (use canMatch instead of canActivate) */
-export const authMatchGuard: CanMatchFn = (_route, segments): boolean | UrlTree => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
-
-  if (auth.isLoggedIn()) return true;
-
-  const url = '/' + segments.map((s: UrlSegment) => s.path).join('/');
-  return router.createUrlTree(['/login'], { queryParams: { returnUrl: url } });
-};
+  canMatch(_route: Route, _segments: UrlSegment[]): boolean | UrlTree {
+    return this.handleAuth();
+  }
+}

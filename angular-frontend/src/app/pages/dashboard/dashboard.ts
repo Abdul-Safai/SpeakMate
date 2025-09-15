@@ -1,19 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/auth.service';
+import { AuthService, AuthUser } from '../../core/auth.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+  styleUrls: ['./dashboard.css', '../home/home.css'],
 })
 export class DashboardComponent {
-  userName = 'User';
+  constructor(public auth: AuthService) {}
 
-  constructor(private session: AuthService) {
-    const u = this.session.user;
-    this.userName = u?.full_name || u?.email || this.userName;
+  get user(): AuthUser | null {
+    return this.auth.user;
   }
 }
